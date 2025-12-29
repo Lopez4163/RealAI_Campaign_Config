@@ -9,7 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@sendgrid/mail": "^8.1.6",
+    "@vercel/og": "^0.8.6",
+    "ai": "^6.0.3",
+    "axios": "^1.13.2",
     "next": "16.1.1",
+    "pdf-lib": "^1.17.1",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
