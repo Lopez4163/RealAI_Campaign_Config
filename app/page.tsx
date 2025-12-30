@@ -14,14 +14,26 @@ export default function Home() {
           industry: ''
       });
 
+      async function handleSubmit(e?: React.FormEvent) {
+        e?.preventDefault();
+        console.log("SUBMITED USER CONTEXT -->", userContext)
+        const res = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userContext })
+        })
+
+        const data = await res.json();
+        console.log("API RETURN", data)
+      }
+
 
 
   return (
     <div className="">
 
 
-      <Form userContext={userContext} setUserContext={setUserContext}/>
-      {/* <Link href="/formoutput" className="inline-block rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Output test Route</Link> */}
+      <Form userContext={userContext} setUserContext={setUserContext} handleSubmit={handleSubmit}/>
 
         
     </div>

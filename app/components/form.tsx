@@ -7,9 +7,10 @@ import type { CampaignType, UserContext } from '@/app/lib/types/campaign'
 type Props = {
     userContext: UserContext;
     setUserContext: React.Dispatch<React.SetStateAction<UserContext>>;
+    handleSubmit: (e?: React.FormEvent) => void | Promise<void>;
 }
 
-export default function Form({ userContext, setUserContext }: Props) {
+export default function Form({ userContext, setUserContext, handleSubmit }: Props) {
     const { campaignType, description, industry} = userContext
     const [otherToggle, setOtherToggle] = useState(false)
 
@@ -21,265 +22,179 @@ export default function Form({ userContext, setUserContext }: Props) {
         : 'Tell us about your audience';
   
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // Basic validation
-        if (!userContext.campaignType) {
-            alert("Please select a campaign type.");
-            return;
-        }
-
-        if (!userContext.description.trim()) {
-            alert("Please provide a description.");
-            return;
-        }
-
-        if (!userContext.industry || !userContext.industry.trim()) {
-            alert("Please select or enter an industry.");
-            return;
-        }
-
-        // If all checks pass
-        console.log("✅ SUBMITTED USER CONTEXT:", userContext);
-    };
-
 
 
   return (
-<div className="min-h-screen bg-slate-950 flex items-center justify-center px-4 py-10">
-  <form
-    onSubmit={handleSubmit}
-    className="w-full max-w-2xl rounded-2xl border border-slate-800 bg-slate-900 p-6 md:p-8 shadow-lg space-y-8"
-  >
-    {/* CAMPAIGN TYPE */}
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-semibold text-slate-100">Tell Us What Ya Think</h1>
-        <p className="text-sm text-slate-400 mt-1">Choose a campaign goal to start.</p>
+    <div className="min-h-screen bg-[#4B95D6] flex flex-col items-center px-4 py-8">
+    {/* HEADER */}
+    <div className="w-full max-w-[640px] text-center">
+      <h1 className="text-[#F4F06A] font-extrabold tracking-wide text-4xl sm:text-5xl md:text-6xl">
+        CAMPAIGN CONFIGURATOR
+      </h1>
+      <div className="mt-3 text-[#F4F06A] font-extrabold tracking-wide text-xl sm:text-2xl md:text-3xl">
+        POWERED BY <span className="text-white">REAL.AI</span>
       </div>
-
-      <div className="space-y-3">
-        <label
-          htmlFor="audiance"
-          className={`flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition
-            ${campaignType === "Audience"
-              ? "border-sky-500 bg-sky-500/10"
-              : "border-slate-800 bg-slate-950/40 hover:border-slate-700"}
-          `}
-        >
-          <input
-            type="radio"
-            id="audiance"
-            name="campaignType"
-            value="Audience"
-            checked={campaignType === "Audience"}
-            onChange={(e) => {
-              setUserContext((prev) => ({
-                ...prev,
-                campaignType: e.target.value as CampaignType,
-              }));
-            }}
-            className="mt-1 accent-sky-500"
-          />
-          <div>
-            <div className="text-sm font-semibold text-slate-100">
-              TARGETED AUDIENCE FOR MY PRODUCT
-            </div>
-            <div className="text-xs text-slate-400 mt-1">
-              You have a product and want to identify or test an audience.
-            </div>
-          </div>
-        </label>
-
-        <label
-          htmlFor="product"
-          className={`flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition
-            ${campaignType === "Product"
-              ? "border-sky-500 bg-sky-500/10"
-              : "border-slate-800 bg-slate-950/40 hover:border-slate-700"}
-          `}
-        >
-          <input
-            type="radio"
-            id="product"
-            name="campaignType"
-            value="Product"
-            checked={campaignType === "Product"}
-            onChange={(e) => {
-              setUserContext((prev) => ({
-                ...prev,
-                campaignType: e.target.value as CampaignType,
-              }));
-            }}
-            className="mt-1 accent-sky-500"
-          />
-          <div>
-            <div className="text-sm font-semibold text-slate-100">
-              PRODUCT TO TARGET MY AUDIENCE
-            </div>
-            <div className="text-xs text-slate-400 mt-1">
-              You have an audience and want to refine/test the product messaging.
-            </div>
-          </div>
-        </label>
-      </div>
+      <div className="mt-6 h-[3px] bg-white/45 w-full rounded-full" />
     </div>
 
-    {/* DESCRIPTION */}
-    <div className="space-y-3">
-      <div className="flex items-end justify-between gap-4">
-        <h1 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">
-          Tell us about your <span className="text-slate-100">{campaignType}</span>
-        </h1>
-        <span className="text-xs text-slate-500">Step 2</span>
-      </div>
+    {/* CARD */}
+    <div className="w-full max-w-[640px] mt-8">
+      <form onSubmit={handleSubmit}
+        className="bg-white rounded-[28px]
+                   px-6 py-6
+                   sm:px-8 sm:py-8
+                   md:px-12 md:py-10
+                   shadow-[0_12px_0_rgba(0,0,0,0.08)]
+                   space-y-8"
+      >
+        {/* CAMPAIGN TYPE */}
+        <div className="space-y-4">
+          <h2 className="text-[#2D80C7] font-extrabold uppercase">
+            Tell us what you want to see:
+          </h2>
 
-      <textarea
-        placeholder={label}
-        value={userContext.description}
-        onChange={(e) =>
-          setUserContext((prev) => ({
-            ...prev,
-            description: e.target.value,
-          }))
-        }
-        className="w-full min-h-[140px] rounded-xl border border-slate-800 bg-slate-950/60
-                   p-4 text-slate-100 placeholder-slate-500
-                   focus:outline-none focus:ring-2 focus:ring-sky-500"
-      />
-    </div>
+          <label className="flex items-center gap-3">
+            <input
+              type="radio"
+              name="campaignType"
+              checked={campaignType === "Audience"}
+              onChange={() =>
+                setUserContext((prev) => ({
+                  ...prev,
+                  campaignType: "Audience",
+                }))
+              }
+              className="h-5 w-5 accent-[#2D80C7]"
+            />
+            <span className="font-extrabold uppercase text-slate-900">
+              Targeted audience for my product
+            </span>
+          </label>
 
-    {/* INDUSTRY */}
-    <div className="space-y-4">
-      <div className="flex items-end justify-between gap-4">
-        <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">
-          Tell us your industry
-        </h2>
-        <span className="text-xs text-slate-500">Step 3</span>
-      </div>
+          <label className="flex items-center gap-3">
+            <input
+              type="radio"
+              name="campaignType"
+              checked={campaignType === "Product"}
+              onChange={() =>
+                setUserContext((prev) => ({
+                  ...prev,
+                  campaignType: "Product",
+                }))
+              }
+              className="h-5 w-5 accent-[#2D80C7]"
+            />
+            <span className="font-extrabold uppercase text-slate-400">
+              Products that will engage my existing audience
+            </span>
+          </label>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <label
-          htmlFor="cpg"
-          className={`flex items-center gap-3 rounded-xl border p-3 cursor-pointer transition
-            ${industry === "consumer-product-goods"
-              ? "border-sky-500 bg-sky-500/10"
-              : "border-slate-800 bg-slate-950/40 hover:border-slate-700"}
-          `}
-        >
-          <input
-            type="radio"
-            id="cpg"
-            name="industryType"
-            value="consumer-product-goods"
-            checked={industry === "consumer-product-goods"}
-            onChange={() => {
-              setOtherToggle(false);
-              setUserContext((prev) => ({ ...prev, industry: "consumer-product-goods" }));
-            }}
-            className="accent-sky-500"
-          />
-          <span className="text-sm font-medium text-slate-100">CPG</span>
-        </label>
+        {/* DESCRIPTION */}
+        <div className="space-y-4">
+          <h2 className="text-[#2D80C7] font-extrabold uppercase">
+            {label}:
+          </h2>
 
-        <label
-          htmlFor="edu"
-          className={`flex items-center gap-3 rounded-xl border p-3 cursor-pointer transition
-            ${industry === "education"
-              ? "border-sky-500 bg-sky-500/10"
-              : "border-slate-800 bg-slate-950/40 hover:border-slate-700"}
-          `}
-        >
-          <input
-            type="radio"
-            id="edu"
-            name="industryType"
-            value="education"
-            checked={industry === "education"}
-            onChange={() => {
-              setOtherToggle(false);
-              setUserContext((prev) => ({ ...prev, industry: "education" }));
-            }}
-            className="accent-sky-500"
-          />
-          <span className="text-sm font-medium text-slate-100">EDU</span>
-        </label>
-
-        <label
-          htmlFor="hospitality"
-          className={`flex items-center gap-3 rounded-xl border p-3 cursor-pointer transition
-            ${industry === "hospitality"
-              ? "border-sky-500 bg-sky-500/10"
-              : "border-slate-800 bg-slate-950/40 hover:border-slate-700"}
-          `}
-        >
-          <input
-            type="radio"
-            id="hospitality"
-            name="industryType"
-            value="hospitality"
-            checked={industry === "hospitality"}
-            onChange={() => {
-              setOtherToggle(false);
-              setUserContext((prev) => ({ ...prev, industry: "hospitality" }));
-            }}
-            className="accent-sky-500"
-          />
-          <span className="text-sm font-medium text-slate-100">HOSPITALITY</span>
-        </label>
-      </div>
-
-      <div className="space-y-3">
-        <label
-          className={`flex items-center gap-3 rounded-xl border p-3 cursor-pointer transition
-            ${otherToggle
-              ? "border-sky-500 bg-sky-500/10"
-              : "border-slate-800 bg-slate-950/40 hover:border-slate-700"}
-          `}
-        >
-          <input
-            type="radio"
-            name="industryType"
-            checked={otherToggle}
-            onChange={() => {
-              setOtherToggle(true);
-              setUserContext((prev) => ({ ...prev, industry: "" }));
-            }}
-            className="accent-sky-500"
-          />
-          <span className="text-sm font-medium text-slate-100">OTHER</span>
-        </label>
-
-        {otherToggle && (
-          <input
-            type="text"
-            placeholder="TYPE YOUR INDUSTRY HERE"
-            value={industry ?? ""}
+          <textarea
+            placeholder="WE MAKE WIDGETS THAT DO ANYTHING YOU COULD IMAGINE..."
+            value={description}
             onChange={(e) =>
               setUserContext((prev) => ({
                 ...prev,
-                industry: e.target.value,
+                description: e.target.value,
               }))
             }
-            className="w-full rounded-xl border border-slate-800 bg-slate-950/60
-                       p-3 text-slate-100 placeholder-slate-500
-                       focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="w-full resize-none rounded-[26px]
+                       bg-[#CFE6FB] border-[4px] border-[#6E6E6E]
+                       px-5 py-4 min-h-[160px] sm:min-h-[200px]
+                       text-slate-800 placeholder-slate-400
+                       focus:outline-none"
           />
-        )}
-      </div>
-    </div>
+        </div>
 
-    {/* SUBMIT */}
-    <button
-      type="submit"
-      className="w-full rounded-xl bg-sky-500 py-3 font-semibold text-slate-950
-                 hover:bg-sky-400 transition"
-    >
-      Submit
-    </button>
-  </form>
-</div>
+        {/* INDUSTRY */}
+        <div className="space-y-4">
+          <h2 className="text-[#2D80C7] font-extrabold uppercase">
+            Tell us your industry:
+          </h2>
+
+          <div className="flex flex-wrap gap-3">
+            {[
+              { label: "CPG", value: "consumer-product-goods" },
+              { label: "EDU", value: "education" },
+              { label: "HOSPITALITY", value: "hospitality" },
+            ].map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => {
+                  setOtherToggle(false);
+                  setUserContext((prev) => ({
+                    ...prev,
+                    industry: opt.value,
+                  }));
+                }}
+                className={`rounded-[14px] px-6 py-3 border-[3px] font-extrabold uppercase
+                  ${
+                    industry === opt.value && !otherToggle
+                      ? "bg-[#4B95D6] border-[#6E6E6E]"
+                      : "bg-white border-[#6E6E6E]"
+                  }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+
+            <button
+              type="button"
+              onClick={() => {
+                setOtherToggle(true);
+                setUserContext((prev) => ({ ...prev, industry: "" }));
+              }}
+              className={`rounded-[14px] px-6 py-3 border-[3px] font-extrabold uppercase
+                ${
+                  otherToggle
+                    ? "bg-[#4B95D6] border-[#6E6E6E]"
+                    : "bg-white border-[#6E6E6E]"
+                }`}
+            >
+              OTHER
+            </button>
+          </div>
+
+          {otherToggle && (
+            <input
+              type="text"
+              placeholder="TYPE YOUR INDUSTRY HERE"
+              value={industry ?? ""}
+              onChange={(e) =>
+                setUserContext((prev) => ({
+                  ...prev,
+                  industry: e.target.value,
+                }))
+              }
+              className="w-full rounded-[16px] border-[3px] border-[#6E6E6E]
+                         px-4 py-3 text-slate-800 placeholder-slate-400
+                         focus:outline-none"
+            />
+          )}
+        </div>
+
+        {/* SUBMIT */}
+        <button
+          type="submit"
+          className="w-full rounded-full bg-[#F4F06A] py-4
+                     text-[#2D80C7] font-extrabold uppercase tracking-wide text-xl
+                     shadow-[0_6px_0_rgba(0,0,0,0.18)]
+                     active:translate-y-[2px]"
+        >
+          Fetch Results
+        </button>
+      </form>
+    </div>
+  </div>
+
 
 
   )
