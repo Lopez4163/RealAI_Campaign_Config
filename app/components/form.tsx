@@ -8,35 +8,24 @@ type Props = {
     userContext: UserContext;
     setUserContext: React.Dispatch<React.SetStateAction<UserContext>>;
     handleSubmit: (e?: React.FormEvent) => void | Promise<void>;
+    error: boolean;
 }
 
-export default function Form({ userContext, setUserContext, handleSubmit }: Props) {
+export default function Form({ userContext, setUserContext, handleSubmit, error }: Props) {
     const { campaignType, description, industry} = userContext
     const [otherToggle, setOtherToggle] = useState(false)
 
-
-    //TEXT AREA LABEEL
     const label =
-        campaignType === 'Audience'
+        campaignType === 'audience'
         ? 'Tell us about your product'
         : 'Tell us about your audience';
+
+    const errorMessage = 'We are calculating your results—our team will email you shortly.'
+    const emptyField = 'Please Enter Description'
   
 
-
-
   return (
-    <div className="min-h-screen bg-[#4B95D6] flex flex-col items-center px-4 py-8">
-    {/* HEADER */}
-    <div className="w-full max-w-[640px] text-center">
-      <h1 className="text-[#F4F06A] font-extrabold tracking-wide text-4xl sm:text-5xl md:text-6xl">
-        CAMPAIGN CONFIGURATOR
-      </h1>
-      <div className="mt-3 text-[#F4F06A] font-extrabold tracking-wide text-xl sm:text-2xl md:text-3xl">
-        POWERED BY <span className="text-white">REAL.AI</span>
-      </div>
-      <div className="mt-6 h-[3px] bg-white/45 w-full rounded-full" />
-    </div>
-
+    <div className="min-h-screen bg-[#4B95D6] flex flex-col items-center px-4 ">
     {/* CARD */}
     <div className="w-full max-w-[640px] mt-8">
       <form onSubmit={handleSubmit}
@@ -57,11 +46,11 @@ export default function Form({ userContext, setUserContext, handleSubmit }: Prop
             <input
               type="radio"
               name="campaignType"
-              checked={campaignType === "Audience"}
+              checked={campaignType === "audience"}
               onChange={() =>
                 setUserContext((prev) => ({
                   ...prev,
-                  campaignType: "Audience",
+                  campaignType: "audience",
                 }))
               }
               className="h-5 w-5 accent-[#2D80C7]"
@@ -75,16 +64,16 @@ export default function Form({ userContext, setUserContext, handleSubmit }: Prop
             <input
               type="radio"
               name="campaignType"
-              checked={campaignType === "Product"}
+              checked={campaignType === "product"}
               onChange={() =>
                 setUserContext((prev) => ({
                   ...prev,
-                  campaignType: "Product",
+                  campaignType: "product",
                 }))
               }
               className="h-5 w-5 accent-[#2D80C7]"
             />
-            <span className="font-extrabold uppercase text-slate-400">
+            <span className="font-extrabold uppercase text-slate-900">
               Products that will engage my existing audience
             </span>
           </label>
@@ -95,7 +84,6 @@ export default function Form({ userContext, setUserContext, handleSubmit }: Prop
           <h2 className="text-[#2D80C7] font-extrabold uppercase">
             {label}:
           </h2>
-
           <textarea
             placeholder="WE MAKE WIDGETS THAT DO ANYTHING YOU COULD IMAGINE..."
             value={description}
@@ -111,6 +99,9 @@ export default function Form({ userContext, setUserContext, handleSubmit }: Prop
                        text-slate-800 placeholder-slate-400
                        focus:outline-none"
           />
+        {error && (
+            <h1 className='text-red-600'>{error}</h1>
+        )}
         </div>
 
         {/* INDUSTRY */}
@@ -135,7 +126,7 @@ export default function Form({ userContext, setUserContext, handleSubmit }: Prop
                     industry: opt.value,
                   }));
                 }}
-                className={`rounded-[14px] px-6 py-3 border-[3px] font-extrabold uppercase
+                className={`rounded-[14px] px-6 py-3 border-[3px] font-extrabold uppercase text-black
                   ${
                     industry === opt.value && !otherToggle
                       ? "bg-[#4B95D6] border-[#6E6E6E]"
@@ -152,7 +143,7 @@ export default function Form({ userContext, setUserContext, handleSubmit }: Prop
                 setOtherToggle(true);
                 setUserContext((prev) => ({ ...prev, industry: "" }));
               }}
-              className={`rounded-[14px] px-6 py-3 border-[3px] font-extrabold uppercase
+              className={`rounded-[14px] px-6 py-3 border-[3px] font-extrabold uppercase text-black
                 ${
                   otherToggle
                     ? "bg-[#4B95D6] border-[#6E6E6E]"
@@ -184,13 +175,19 @@ export default function Form({ userContext, setUserContext, handleSubmit }: Prop
         {/* SUBMIT */}
         <button
           type="submit"
+          disabled={!description || !description.trim()}
           className="w-full rounded-full bg-[#F4F06A] py-4
                      text-[#2D80C7] font-extrabold uppercase tracking-wide text-xl
                      shadow-[0_6px_0_rgba(0,0,0,0.18)]
-                     active:translate-y-[2px]"
+                     active:translate-y-[2px]
+                     disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none disabled:active:translate-y-0
+                     "
         >
           Fetch Results
         </button>
+        {error && (
+            <h1 className='text-red-600'>{error}</h1>
+        )}
       </form>
     </div>
   </div>

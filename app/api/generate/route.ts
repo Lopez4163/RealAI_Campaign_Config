@@ -11,10 +11,10 @@ export async function POST(req: Request) {
     const { campaignType } = userContext
 
 
-    if (campaignType !== "Audience" && campaignType !== "Product") {
+    if (campaignType !== "audience" && campaignType !== "product") {
         return NextResponse.json({ error: "Invalid campaignType" }, { status: 400 });
       }      
-    const prompt = campaignType === "Audience" ? audiencePrompt(userContext) : productPrompt(userContext)
+    const prompt = campaignType === "audience" ? audiencePrompt(userContext) : productPrompt(userContext)
 
     const apiKey = process.env.GOOGLE_API_KEY;
     if (!apiKey) {
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
         apiKey,
         httpOptions: { apiVersion: "v1" },
     });
-    
+
     try {
         const resp = await ai.models.generateContent({
           model: "gemini-2.0-flash",
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
         console.log(text);
         console.log("=== GEMINI RAW OUTPUT END ===");
     
-        return NextResponse.json({ text }); // clearer for the client
+        return NextResponse.json({ text }); 
       } catch (err: any) {
         console.error("Gemini error:", err);
     
