@@ -37,12 +37,14 @@ export async function POST(req: Request) {
         });
     
         const text = resp.text ?? "";
-    
+        const jsonStr = text.match(/\{[\s\S]*\}/)?.[0];
+        const parsed = jsonStr ? JSON.parse(jsonStr) : { raw: text };
+
         console.log("=== GEMINI RAW OUTPUT START ===");
-        console.log(text);
+        console.log(parsed);
         console.log("=== GEMINI RAW OUTPUT END ===");
     
-        return NextResponse.json({ text }); 
+        return NextResponse.json(parsed); 
       } catch (err: any) {
         console.error("Gemini error:", err);
     
