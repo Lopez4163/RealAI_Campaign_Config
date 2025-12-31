@@ -40,27 +40,30 @@ http://localhost:3000
 All prompt logic lives in a dedicated file, making it easy to iterate on
 prompt design without touching frontend or API code.
 
+This is the primary area to modify model behavior and output structure.
+
 ### Prompt Location
 ```bash
 campaign_configurator/app/lib/prompts/prompts.ts
 ```
 ## 🧠 Prompt Variants
 
-The app uses different prompt functions depending on what the user selects in
-the form. Each prompt receives the same `UserContext` and returns structured
+The app uses different prompt functions depending on the selected
+`campaignType`. Each prompt receives the same `UserContext` input.
 output from the model.
 
 ### Audience Prompt
 
-Used when the leed chooses `Targeted audience for my product`.
+Used when the leed selects `Targeted audience for my product`.
 ```ts
 export function audiencePrompt(ctx: UserContext) 
 ```
 ### Product Prompt
 
-Used when the leed chooses `Products that will engage my existing audience`.
+Used when the leed selects `Products that will engage my existing audience`.
 ```ts
 export function productPrompt(ctx: UserContext) 
 ```
 The prompt functions accept a `UserContext` object and inject user-provided
 values (such as `industry` and `description`) directly into the model prompt.
+
