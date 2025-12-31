@@ -18,7 +18,12 @@ cd campaign_configurator
 npm install
 ```
 ### 3. Enviorment Variables
-Create a .env file in the root directory (/campaign_configurator)
+Create a .env file in the root directory `/campaign_configurator`.
+The current build is using the following model:
+```bash 
+model: "gemini-2.0-flash",   #DIRECTORY --> /app/api/generate/route.ts
+```
+Use appropriate GoogleAI Key or change the model. Add code below and enter key: 
 ```bash
 GOOGLE_API_KEY=""    #REMOVE( "" )
 ```
@@ -30,3 +35,32 @@ npm run dev
 ```bash
 http://localhost:3000
 ```
+## 🚀 Edit Prompt for Engineering
+
+All prompt logic lives in a dedicated file, making it easy to iterate on
+prompt design without touching frontend or API code.
+
+### Prompt Location
+```bash
+campaign_configurator/app/lib/prompts/prompts.ts
+```
+## 🧠 Prompt Variants
+
+The app uses different prompt functions depending on what the user selects in
+the form. Each prompt receives the same `UserContext` and returns structured
+output from the model.
+
+### Audience Prompt
+
+Used when the leed chooses `Targeted audience for my product`.
+```ts
+export function audiencePrompt(ctx: UserContext) 
+```
+### Product Prompt
+
+Used when the leed chooses `Products that will engage my existing audience`.
+```ts
+export function productPrompt(ctx: UserContext) 
+```
+The prompt functions accept a `UserContext` object and inject user-provided
+values (such as `industry` and `description`) directly into the model prompt.
