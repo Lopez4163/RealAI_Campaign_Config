@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { audiencePrompt, productPrompt } from "@/app/lib/prompts/prompt";
+import { audiencePrompt, productPrompt } from "@/app/lib/prompts/prompts";
 import { CampaignType, UserContext } from "@/app/lib/types/campaign";
 import { GoogleGenAI } from "@google/genai";
 
