@@ -50,58 +50,86 @@ export default function Home() {
       }
       if (isLoading) {
         return (
-          <main className="min-h-screen flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-lg font-semibold">Generating your campaign…</div>
-              <div className="opacity-70 mt-2">This usually takes a few seconds.</div>
+          <main className="min-h-screen bg-slate-950 text-slate-100 px-4 py-10">
+            <div className="mx-auto w-full max-w-[640px]">
+              <div className="rounded-lg border border-slate-800 bg-slate-900 p-6">
+                <div className="text-sm font-medium">Generating…</div>
+                <div className="mt-1 text-sm text-slate-400">This usually takes a few seconds.</div>
+              </div>
             </div>
           </main>
         );
       }
-
-      if(formOutPut) {
+      
+      
+      if (formOutPut) {
         return (
-          <main>
-            <ul className="mt-6 space-y-2">
-              {Object.entries(formOutPut).map(([key, value]) => (
-                <li key={key} className="rounded border p-3">
-                  <span className="font-semibold capitalize">
-                    {key.replace(/_/g, " ")}:
-                  </span>{" "}
-                  {value}
-                </li>
-              ))}
-            </ul>
-            <button onClick={() => {
-              setFormOutput(null)
-            }}>
-              Back
-            </button>
+          <main className="min-h-screen bg-slate-950 text-slate-100 px-4 py-10">
+            <div className="mx-auto w-full max-w-[640px] space-y-4">
+              <div className="rounded-lg border border-slate-800 bg-slate-900 p-6">
+      
+                <div className="rounded-md border border-slate-800 bg-slate-950/40 p-3">
+                  <div className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-400">
+                    Parsed output
+                  </div>
+
+                  <ul className="space-y-2">
+                    {Object.entries(formOutPut).map(([key, value]) => (
+                      <li
+                        key={key}
+                        className="rounded-md border border-slate-800 bg-slate-950/60 p-3 text-sm"
+                      >
+                        <span className="font-medium capitalize text-slate-200">
+                          {key.replace(/_/g, " ")}:
+                        </span>{" "}
+                        <span className="text-slate-300">{value}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+        
+                {/* Raw JSON*/}
+                <div className="mt-6 rounded-md border border-slate-800 bg-slate-950/40 p-3">
+                  <div className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-400">
+                    Raw output
+                  </div>
+      
+                  <pre className="max-h-[300px] overflow-auto rounded-md bg-black/80 p-3 text-xs text-slate-200">
+                    {JSON.stringify(formOutPut, null, 2)}
+                  </pre>
+                </div>
+      
+                {/* Reset */}
+                <button
+                  type="button"
+                  onClick={() => setFormOutput(null)}
+                  className="mt-4 inline-flex items-center justify-center rounded-md border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800 cursor-pointer"
+                >
+                  Back
+                </button>
+      
+              </div>
+            </div>
           </main>
         );
       }
       
-  return (
-    <div className="min-h-screen bg-[#4B95D6] flex flex-col items-center px-4 pb-10">
-        {/* HEADER */}
-        <div className="w-full max-w-[640px] text-center mt-6">
-          <h1 className="text-[#F4F06A] font-extrabold tracking-wide
-                        text-4xl sm:text-5xl md:text-5xl">
-            CAMPAIGN CONFIGURATOR
-          </h1>
-
-          <div className="mt-3 text-[#F4F06A] font-extrabold tracking-wide
-                          text-xl sm:text-2xl md:text-2xl">
-            POWERED BY <span className="text-white">REAL.AI</span>
+      return (
+        <div className="min-h-screen bg-slate-950 text-slate-100 px-4 py-10">
+          <div className="mx-auto w-full max-w-[640px] space-y-6">
+            {/* HEADER */}
+            <div className="space-y-1">
+              <h1 className="text-lg font-semibold text-slate-100">Campaign Configurator</h1>
+              <p className="text-sm text-slate-400">Powered by REAL.AI</p>
+            </div>
+      
+              <Form
+                userContext={userContext}
+                setUserContext={setUserContext}
+                handleSubmit={handleSubmit}
+                error={error}
+              />
           </div>
-          <div className="mt-6 h-[3px] bg-white/45 w-full rounded-full" />
         </div>
-          <Form
-            userContext={userContext}
-            setUserContext={setUserContext}
-            handleSubmit={handleSubmit}
-            error={error}
-          />
-      </div>
-  );
-}
+      );      
+    }      
