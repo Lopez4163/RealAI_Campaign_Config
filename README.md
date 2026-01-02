@@ -11,7 +11,7 @@ This project is designed to be run locally with minimal setup.
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/Lopez4163/RealAI_Campaign_Config.git
-cd campaign_configurator
+cd REAL-AI-CONFIG-POC
 ```
 ### 2. Install Dependecies
 ```bash
