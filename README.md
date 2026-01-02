@@ -33,7 +33,7 @@ npm run dev
 ```
 ### 5. Open Browser
 ```bash
-http://localhost:3000
+http://localhost:3000       #CHECK CONSOLE FOR LOCAL SERVER ADDRESS
 ```
 ## 🚀 Edit Prompt for Engineering
 
