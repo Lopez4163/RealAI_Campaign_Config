@@ -1,4 +1,3 @@
-// app/lib/types/campaign.ts
 export type CampaignType = 'audience' | 'product';
 
 export interface UserContext {

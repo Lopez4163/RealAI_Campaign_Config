@@ -1,10 +1,7 @@
 "use client";
-import Image from "next/image";
-import Link from "next/link";
 import Form from "./components/form";
 import { useState } from "react";
-import type { CampaignType, UserContext } from '@/app/lib/types/campaign';
-import { normalizeOutputToLines } from "./lib/formatter/formatter";
+import type { UserContext } from '@/app/lib/types/campaign';
 
 export default function Home() {
       const [userContext, setUserContext] = useState<UserContext>({
@@ -17,7 +14,7 @@ export default function Home() {
       const [formOutPut, setFormOutput] = useState<Record<string, string> | null>(null);
       const [error, setError] = useState(false)
       
-
+      // FORM SUBMITION FUNC
       async function handleSubmit(e?: React.FormEvent) {
         e?.preventDefault();
         setError(false);        
@@ -26,7 +23,6 @@ export default function Home() {
           setError(true);
           return;
         }
-        console.log("SUBMITED USER CONTEXT -->", userContext)
         try {
           const res = await fetch("/api/generate", {
             method: "POST",
@@ -34,7 +30,7 @@ export default function Home() {
             body: JSON.stringify({ userContext })
           })
           const data = await res.json();
-          console.log("API RETURN", data)
+          console.log("** API RETURN -->", data)
           if(!res.ok) {
             setError(true)
             console.log("BACKEND ERROR", data.error)
@@ -48,10 +44,12 @@ export default function Home() {
           setIsLoading(false)
         }
       }
+
+      // LOADING SCREEN
       if (isLoading) {
         return (
           <main className="min-h-screen bg-slate-950 text-slate-100 px-4 py-10">
-            <div className="mx-auto w-full max-w-[640px]">
+            <div className="mx-auto w-full max-w-160"> 
               <div className="rounded-lg border border-slate-800 bg-slate-900 p-6">
                 <div className="text-sm font-medium">Generating…</div>
                 <div className="mt-1 text-sm text-slate-400">This usually takes a few seconds.</div>
@@ -61,18 +59,18 @@ export default function Home() {
         );
       }
       
-      
+      // OUTPUT SCREEN
       if (formOutPut) {
         return (
           <main className="min-h-screen bg-slate-950 text-slate-100 px-4 py-10">
-            <div className="mx-auto w-full max-w-[640px] space-y-4">
+            <div className="mx-auto w-full max-w-160 space-y-4">
               <div className="rounded-lg border border-slate-800 bg-slate-900 p-6">
       
                 <div className="rounded-md border border-slate-800 bg-slate-950/40 p-3">
                   <div className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-400">
                     Parsed output
                   </div>
-
+                  {/* PARSED OUTPUT */}
                   <ul className="space-y-2">
                     {Object.entries(formOutPut).map(([key, value]) => (
                       <li
@@ -88,18 +86,15 @@ export default function Home() {
                   </ul>
                 </div>
         
-                {/* Raw JSON*/}
+                {/* RAW JSON*/}
                 <div className="mt-6 rounded-md border border-slate-800 bg-slate-950/40 p-3">
                   <div className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-400">
                     Raw output
                   </div>
-      
-                  <pre className="max-h-[300px] overflow-auto rounded-md bg-black/80 p-3 text-xs text-slate-200">
+                  <pre className="max-h-75 overflow-auto rounded-md bg-black/80 p-3 text-xs text-slate-200">
                     {JSON.stringify(formOutPut, null, 2)}
                   </pre>
                 </div>
-      
-                {/* Reset */}
                 <button
                   type="button"
                   onClick={() => setFormOutput(null)}
@@ -116,8 +111,7 @@ export default function Home() {
       
       return (
         <div className="min-h-screen bg-slate-950 text-slate-100 px-4 py-10">
-          <div className="mx-auto w-full max-w-[640px] space-y-6">
-            {/* HEADER */}
+          <div className="mx-auto w-full max-w-160 space-y-6">
             <div className="space-y-1">
               <h1 className="text-lg font-semibold text-slate-100">Campaign Configurator</h1>
               <p className="text-sm text-slate-400">Powered by REAL.AI</p>

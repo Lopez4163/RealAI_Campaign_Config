@@ -1,7 +1,7 @@
 "use client";
 import React from 'react'
 import { useState } from 'react'
-import type { CampaignType, UserContext } from '@/app/lib/types/campaign'
+import type { UserContext } from '@/app/lib/types/campaign'
 
 
 type Props = {
@@ -20,14 +20,10 @@ export default function Form({ userContext, setUserContext, handleSubmit, error 
         ? 'Tell us about your product'
         : 'Tell us about your audience';
 
-    const errorMessage = 'We are calculating your results—our team will email you shortly.'
-    const emptyField = 'Please Enter Description'
-  
-
   return (
 <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center px-4 py-10">
   {/* CARD */}
-  <div className="w-full max-w-[640px]">
+  <div className="w-full max-w-160">
     <form
       onSubmit={handleSubmit}
       className="rounded-xl border border-slate-800 bg-slate-900 p-6 sm:p-8 space-y-6"
@@ -78,7 +74,7 @@ export default function Form({ userContext, setUserContext, handleSubmit, error 
           onChange={(e) =>
             setUserContext((prev) => ({ ...prev, description: e.target.value }))
           }
-          className="w-full min-h-[160px] resize-none rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none"
+          className="w-full min-h-40 resize-none rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none"
         />
         {error && <p className="text-sm text-red-400">Please enter a description.</p>}
       </div>
@@ -141,7 +137,7 @@ export default function Form({ userContext, setUserContext, handleSubmit, error 
         )}
       </div>
 
-      {/* SUBMIT */}
+      {/* SUBMIT BUTTON */}
       <button
         type="submit"
         disabled={!description || !description.trim()}

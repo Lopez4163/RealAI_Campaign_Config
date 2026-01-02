@@ -1,5 +1,18 @@
 import { UserContext } from "../types/campaign";
 
+/**
+ * Prompts sent to the Gemini model.
+ *
+ * A specific prompt is selected based on the user's chosen campaign type.
+ * Each prompt consumes the `UserContext` object, which includes:
+ *  - campaignType
+ *  - description
+ *  - industry
+ *
+ * These prompts define the model’s behavior and output structure.
+ * They can be modified here without impacting any frontend logic or UI components.
+ */
+
 export function audiencePrompt(ctx: UserContext) {
   return `
 User is in the ${ctx.industry} industry.
@@ -17,6 +30,7 @@ Return JSON ONLY with:
 No explanations. No markdown.
 `.trim();
 }
+
 
 export function productPrompt(ctx: UserContext) {
   return `
