@@ -2,6 +2,7 @@
 import Form from "./components/form";
 import { useState } from "react";
 import type { UserContext } from '@/app/lib/types/campaign';
+import { buildOgUrl } from "@/app/lib/org/buildOgUrl";
 
 export default function Home() {
       const [userContext, setUserContext] = useState<UserContext>({
@@ -44,6 +45,11 @@ export default function Home() {
           setIsLoading(false)
         }
       }
+
+      // const ogImageUrl = formOutPut
+      // ? buildOgUrl(formOutPut, userContext)
+      // : null;
+    
 
       // LOADING SCREEN
       if (isLoading) {
