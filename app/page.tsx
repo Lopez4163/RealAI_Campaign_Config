@@ -1,7 +1,7 @@
 "use client";
 import Form from "./components/form";
 import { useState } from "react";
-import type { UserContext } from '@/app/lib/types/campaign';
+import type { UserContext,  CampaignType } from '@/app/lib/types/campaign';
 import { buildOgUrl, FormOutput } from "@/app/lib/org/buildOgUrl";
 
 export default function Home() {
@@ -67,7 +67,33 @@ export default function Home() {
       // OUTPUT SCREEN
       if (formOutput && ogImageUrl) {
         return (
-          <div className="h-screen w-screen bg-slate-950 overflow-hidden flex items-center justify-center p-6">
+          <div className="relative h-screen w-screen bg-slate-950 overflow-hidden flex items-center justify-center p-6">
+            
+            {/* BACK BUTTON */}
+            <button
+              onClick={() => {
+                setFormOutput(null);
+                setUserContext({
+                  campaignType: "audience",
+                  description: "",
+                  industry: "",
+                });
+              }}
+              className="
+                absolute left-6 top-6
+                rounded-md
+                bg-slate-800/80
+                px-4 py-2
+                text-sm font-medium text-slate-100
+                hover:bg-slate-700
+                transition
+                shadow-md
+              "
+            >
+              ← Back
+            </button>
+      
+            {/* CENTERED PAPER */}
             <div className="bg-slate-900/40 p-4 rounded-xl shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
               <div className="bg-white rounded-lg p-3 ring-1 ring-black/10">
                 <img
@@ -77,9 +103,11 @@ export default function Home() {
                 />
               </div>
             </div>
+      
           </div>
         );
       }
+      
       return (
         <div className="min-h-screen bg-slate-950 text-slate-100 px-4 py-10">
           <div className="mx-auto w-full max-w-160 space-y-6">

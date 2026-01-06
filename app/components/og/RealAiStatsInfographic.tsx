@@ -1,4 +1,6 @@
 import { ImageResponse } from '@vercel/og';
+import converstion from '@/public/assets/converstion.png'
+import arrow from '@/public/assets/arrow.png'
 
 interface StatsInfographicProps {
   industry_header: string;
@@ -31,14 +33,13 @@ export default function RealAiStatsInfographic({
         justifyContent: 'space-between',
         backgroundColor: colors.bg,
         fontFamily: '"Inter", sans-serif',
-        // ↓ paper fit (same idea as last infographic)
         padding: '48px 48px',
         color: colors.white,
         position: 'relative',
       }}
     >
       {/* --- HEADER --- */}
-      <div style={{ display: 'flex', width: '100%', flexDirection: 'column', marginBottom: '16px' }}>
+      <div style={{ display: 'flex', width: '100%', flexDirection: 'column', marginBottom: '16px', justifyContent: 'center' }}>
         <h2
           style={{
             fontSize: '30px', // ↓ tiny reduction
@@ -69,13 +70,21 @@ export default function RealAiStatsInfographic({
       >
         {/* ROW 1: Sample Size */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '34px' }}>
-          <svg width="110" height="110" viewBox="0 0 24 24" fill="none" stroke={colors.yellow} strokeWidth="2">
-            <path d="M12 2a10 10 0 1 0 10 10" />
-            <path d="M12 6a6 6 0 1 0 6 6" />
-            <path d="M12 10a2 2 0 1 0 2 2" />
-            <path d="M22 2l-9 9" strokeWidth="3" />
-          </svg>
-
+        <div style={{ display: 'flex', alignItems: 'center', gap: '34px' }}>
+            <svg
+              width="110"
+              height="110"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke={colors.yellow}
+              strokeWidth="2"
+            >
+              <path d="M12 2a10 10 0 1 0 10 10" />
+              <path d="M12 6a6 6 0 1 0 6 6" />
+              <path d="M12 10a2 2 0 1 0 2 2" />
+              <path d="M22 2l-9 9" strokeWidth="3" />
+            </svg>
+          </div>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <span style={{ fontSize: '22px', fontWeight: 600, opacity: 0.9 }}>SAMPLE SIZE</span>
             <span style={{ fontSize: '96px', fontWeight: 800, lineHeight: 1, color: colors.yellow }}>
@@ -167,7 +176,7 @@ export default function RealAiStatsInfographic({
         <div style={{ fontSize: '12px' }}>Gesture</div>
       </div>
 
-      <div style={{ position: 'absolute', bottom: 26, right: 40, fontSize: '14px', opacity: 0.8 }}>
+      <div style={{ position: 'absolute', bottom: 26, right: 40, fontSize: '25px', opacity: 0.8 }}>
         © 2025 Gesture. All rights reserved.
       </div>
     </div>

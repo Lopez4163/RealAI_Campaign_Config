@@ -203,7 +203,7 @@ export default function RealAiProductInfographic({
           position: "absolute",
           bottom: 26,
           right: 40,
-          fontSize: "14px",
+          fontSize: "25px",
           opacity: 0.8,
         }}
       >
