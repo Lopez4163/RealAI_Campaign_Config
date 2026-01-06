@@ -10,6 +10,9 @@ interface ProductOutput {
   swag_items: string[];
 }
 
+export type FormOutput = AudienceOutput | ProductOutput;
+
+
 export function buildOgUrl(
   formOutput: AudienceOutput | ProductOutput,
   userContext: UserContext
@@ -27,9 +30,14 @@ export function buildOgUrl(
   }
 
   if (userContext.campaignType === "product") {
-    const output = formOutput as ProductOutput;
-    params.set("items", output.swag_items.join(","));
-  }
+    const output = formOutput as any;
 
+    const items: string[] = Array.isArray(output?.swag_items)
+      ? output.swag_items
+      : [output?.item_1, output?.item_2, output?.item_3, output?.item_4, output?.item_5].filter(Boolean);
+    
+    params.set("items", items.join(","));
+  }
+  console.log('URL --> ',`/api/og?${params.toString()}`)
   return `/api/og?${params.toString()}`;
 }

@@ -126,7 +126,7 @@ export default function RealAiStatsInfographic({
       </div>
 
       {/* --- LOGO FOOTER --- */}
-      <div style={{ position: 'absolute', bottom: 30, left: 40 }}>
+      <div style={{ position: 'absolute', bottom: 30, left: 40, display: 'flex' }}>
          {/* Simple G Logo Placeholder */}
          <div style={{ fontSize: '40px', fontWeight: 900 }}>G</div>
          <div style={{ fontSize: '12px' }}>Gesture</div>

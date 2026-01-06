@@ -30,10 +30,14 @@ export default function RealAiProductInfographic({
 
       {/* CONTENT */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', flexGrow: 1, justifyContent: 'center' }}>
-        <div style={{ display: 'flex', marginBottom: '40px' }}>
-             {/* Replace with production URL */}
-             <img src="https://your-domain.com/assets/gesture-box.png" width="400" height="300" style={{ objectFit: 'contain' }} />
+        <div style={{ width: 400, height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 24, backgroundColor: 'rgba(255,255,255,0.15)' }}>
+          <span style={{ fontSize: 48 }}>📦</span>
         </div>
+        {/* bottom code is original */}
+        {/* <div style={{ display: 'flex', marginBottom: '40px' }}> */}
+             {/* Replace with production URL */}
+             {/* <img src="https://your-domain.com/assets/gesture-box.png" width="400" height="300" style={{ objectFit: 'contain' }} /> */}
+        {/* </div> */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '80%' }}>
             <h3 style={{ fontSize: '28px', fontWeight: 900, color: colors.yellow, textTransform: 'uppercase', marginBottom: '20px' }}>
                 GESTURE GIFT BOX CONTENTS:
@@ -62,8 +66,8 @@ export default function RealAiProductInfographic({
       </div>
       
       {/* LOGO */}
-      <div style={{ position: 'absolute', bottom: 30, left: 40 }}>
-         <div style={{ fontSize: '40px', fontWeight: 900 }}>G</div>
+      <div style={{ position: 'absolute', bottom: 30, left: 40, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ fontSize: '40px', fontWeight: 900 }}>G</div>
          <div style={{ fontSize: '12px' }}>Gesture</div>
       </div>
        <div style={{ position: 'absolute', bottom: 30, right: 40, fontSize: '14px', opacity: 0.8 }}>
