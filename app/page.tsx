@@ -1,17 +1,20 @@
 "use client";
 import Form from "./components/form";
 import { useState } from "react";
-import type { UserContext } from '@/app/lib/types/campaign';
+import type { UserContext,  CampaignType } from '@/app/lib/types/campaign';
+import { buildOgUrl, FormOutput } from "@/app/lib/org/buildOgUrl";
+import { sendTestEmail } from "./lib/sendGrid/sendEmail";
 
 export default function Home() {
       const [userContext, setUserContext] = useState<UserContext>({
           campaignType: "audience", 
           description: '',
-          industry: ''
+          industry: '',
+          email: ''
       });
 
       const [isLoading, setIsLoading] = useState(false)
-      const [formOutPut, setFormOutput] = useState<Record<string, string> | null>(null);
+      const [formOutput, setFormOutput] = useState<FormOutput | null>(null);
       const [error, setError] = useState(false)
       
       // FORM SUBMITION FUNC
@@ -37,14 +40,49 @@ export default function Home() {
             return;
           }
           setFormOutput(data)
-        } catch(err) {
-            setError(true);
-            console.log("FETCH ERROR",err)
+
+          const emailToSend = userContext.email;
+          if (emailToSend) {
+            await sendEmail(emailToSend);
+          }
+        } catch (err) {
+          console.error('FETCH ERROR', err);
+          setError(true);
         } finally {
-          setIsLoading(false)
+          setIsLoading(false);
         }
       }
 
+      async function sendEmail(email: string) {
+        console.log('email to send:', email);
+      
+        try {
+          const res = await fetch('/api/testEmail', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          });
+      
+          const data = await res.json().catch(() => null);
+      
+          if (!res.ok) {
+            console.error('Email API error:', data);
+            setError(true);
+            return;
+          }
+      
+          console.log('Email API success:', data);
+        } catch (err) {
+          console.error('Email fetch failed:', err);
+          setError(true);
+        }
+      }
+      
+
+      const ogImageUrl = formOutput
+      ? buildOgUrl(formOutput, userContext)
+      : null;
+    
       // LOADING SCREEN
       if (isLoading) {
         return (
@@ -58,54 +96,48 @@ export default function Home() {
           </main>
         );
       }
-      
       // OUTPUT SCREEN
-      if (formOutPut) {
+      if (formOutput && ogImageUrl) {
         return (
-          <main className="min-h-screen bg-slate-950 text-slate-100 px-4 py-10">
-            <div className="mx-auto w-full max-w-160 space-y-4">
-              <div className="rounded-lg border border-slate-800 bg-slate-900 p-6">
+          <div className="relative h-screen w-screen bg-slate-950 overflow-hidden flex items-center justify-center p-6">
+            
+            {/* BACK BUTTON */}
+            <button
+              onClick={() => {
+                setFormOutput(null);
+                setUserContext({
+                  campaignType: "audience",
+                  description: "",
+                  industry: "",
+                  email: ""
+                });
+              }}
+              className="
+                absolute left-6 top-6
+                rounded-md
+                bg-slate-800/80
+                px-4 py-2
+                text-sm font-medium text-slate-100
+                hover:bg-slate-700
+                transition
+                shadow-md
+              "
+            >
+              ← Back
+            </button>
       
-                <div className="rounded-md border border-slate-800 bg-slate-950/40 p-3">
-                  <div className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-400">
-                    Parsed output
-                  </div>
-                  {/* PARSED OUTPUT */}
-                  <ul className="space-y-2">
-                    {Object.entries(formOutPut).map(([key, value]) => (
-                      <li
-                        key={key}
-                        className="rounded-md border border-slate-800 bg-slate-950/60 p-3 text-sm"
-                      >
-                        <span className="font-medium capitalize text-slate-200">
-                          {key.replace(/_/g, " ")}:
-                        </span>{" "}
-                        <span className="text-slate-300">{value}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-        
-                {/* RAW JSON*/}
-                <div className="mt-6 rounded-md border border-slate-800 bg-slate-950/40 p-3">
-                  <div className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-400">
-                    Raw output
-                  </div>
-                  <pre className="max-h-75 overflow-auto rounded-md bg-black/80 p-3 text-xs text-slate-200">
-                    {JSON.stringify(formOutPut, null, 2)}
-                  </pre>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setFormOutput(null)}
-                  className="mt-4 inline-flex items-center justify-center rounded-md border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800 cursor-pointer"
-                >
-                  Back
-                </button>
-      
+            {/* CENTERED PAPER */}
+            <div className="bg-slate-900/40 p-4 rounded-xl shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
+              <div className="bg-white rounded-lg p-3 ring-1 ring-black/10">
+                <img
+                  src={ogImageUrl}
+                  alt="Campaign infographic"
+                  className="block max-h-[88vh] max-w-[88vw] w-auto h-auto rounded-md"
+                />
               </div>
             </div>
-          </main>
+      
+          </div>
         );
       }
       
