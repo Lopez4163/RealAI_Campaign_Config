@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { UserContext,  CampaignType } from '@/app/lib/types/campaign';
 import { buildOgUrl, FormOutput } from "@/app/lib/org/buildOgUrl";
 import { sendTestEmail } from "./lib/sendGrid/sendEmail";
+import { api } from '@/app/lib/api/client'
 
 export default function Home() {
       const [userContext, setUserContext] = useState<UserContext>({
@@ -27,23 +28,12 @@ export default function Home() {
           return;
         }
         try {
-          const res = await fetch("/api/generate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userContext })
-          })
-          const data = await res.json();
+          const data = await api.post<FormOutput>('/generate', { userContext });
+          setFormOutput(data);          
           console.log("** API RETURN -->", data)
-          if(!res.ok) {
-            setError(true)
-            console.log("BACKEND ERROR", data.error)
-            return;
-          }
-          setFormOutput(data)
 
-          const emailToSend = userContext.email;
-          if (emailToSend) {
-            await sendEmail(emailToSend);
+          if (userContext.email) {
+            await api.post('/testEmail', { email: userContext.email });
           }
         } catch (err) {
           console.error('FETCH ERROR', err);
@@ -51,34 +41,9 @@ export default function Home() {
         } finally {
           setIsLoading(false);
         }
-      }
+      }      
 
-      async function sendEmail(email: string) {
-        console.log('email to send:', email);
-      
-        try {
-          const res = await fetch('/api/testEmail', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email }),
-          });
-      
-          const data = await res.json().catch(() => null);
-      
-          if (!res.ok) {
-            console.error('Email API error:', data);
-            setError(true);
-            return;
-          }
-      
-          console.log('Email API success:', data);
-        } catch (err) {
-          console.error('Email fetch failed:', err);
-          setError(true);
-        }
-      }
-      
-
+      // IMAGE URL BUILDER
       const ogImageUrl = formOutput
       ? buildOgUrl(formOutput, userContext)
       : null;
