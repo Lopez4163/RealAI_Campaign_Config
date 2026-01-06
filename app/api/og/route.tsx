@@ -33,7 +33,7 @@ export async function GET(req: Request) {
           ltv_multiple={ltv_multiple}
         />
       ),
-      { width: 1200, height: 630 }
+      { width: 1200, height: 1533 }
     );
   }
 
@@ -45,6 +45,6 @@ export async function GET(req: Request) {
         items={items}
       />
     ),
-    { width: 1200, height: 630 }
+    { width: 1200, height: 1533 }
   );
 }
