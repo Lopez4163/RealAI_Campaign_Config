@@ -9,9 +9,10 @@ type Props = {
     setUserContext: React.Dispatch<React.SetStateAction<UserContext>>;
     handleSubmit: (e?: React.FormEvent) => void | Promise<void>;
     error: boolean;
-}
+    showPreview: boolean;
+    previewReady: boolean;}
 
-export default function Form({ userContext, setUserContext, handleSubmit, error }: Props) {
+export default function Form({ userContext, setUserContext, handleSubmit, error, showPreview, previewReady }: Props) {
     const { campaignType, description, industry, email } = userContext
     const [otherToggle, setOtherToggle] = useState(false)
 
@@ -20,8 +21,11 @@ export default function Form({ userContext, setUserContext, handleSubmit, error 
         ? 'Tell us about your product'
         : 'Tell us about your audience';
   return (
-  <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center px-4 py-10">
-    {/* CARD */}
+    <div
+        className=
+          "min-h-screen bg-slate-950 text-slate-100 px-4 py-1"
+>   
+   {/* CARD */}
     <div className="w-full max-w-160">
       <form
         onSubmit={handleSubmit}
@@ -143,14 +147,25 @@ export default function Form({ userContext, setUserContext, handleSubmit, error 
             setUserContext((prev) => ({ ...prev, email: e.target.value }))
           }}/>
         </div>
-        {/* SUBMIT BUTTON */}
-        <button
-          type="submit"
-          disabled={!description || !description.trim() || !industry || !email.trim()}
-          className="w-full rounded-md border border-slate-100 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-900 cursor-pointer hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Fetch Results
-        </button>
+        {/* BUTTONS */}
+        <div className='flex flex-col gap-2'>
+          {showPreview && previewReady && (
+              <button
+                type="submit"
+                className="w-full rounded-md border border-slate-100 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-900 cursor-pointer hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Update Preview
+              </button>
+          )}
+          <button
+            type="submit"
+            disabled={!description || !description.trim() || !industry || !email.trim()}
+            className="w-full rounded-md border border-slate-100 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-900 cursor-pointer hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {showPreview && previewReady ? "Complete PDF" : "Fetch Results"}
+          </button>
+        </div>
+
       </form>
     </div>
   </div>
