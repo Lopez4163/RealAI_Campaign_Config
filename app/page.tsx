@@ -32,9 +32,9 @@ export default function Home() {
           setFormOutput(data);          
           console.log("** API RETURN -->", data)
 
-          if (userContext.email) {
-            await api.post('/testEmail', { email: userContext.email });
-          }
+          // if (userContext.email) {
+          //   await api.post('/testEmail', { email: userContext.email });
+          // }
         } catch (err) {
           console.error('FETCH ERROR', err);
           setError(true);
