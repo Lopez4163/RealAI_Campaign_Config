@@ -5,14 +5,19 @@ import type { UserContext } from '@/app/lib/types/campaign'
 
 
 type Props = {
-    userContext: UserContext;
-    setUserContext: React.Dispatch<React.SetStateAction<UserContext>>;
-    handleSubmit: (e?: React.FormEvent) => void | Promise<void>;
-    error: boolean;
-    showPreview: boolean;
-    previewReady: boolean;}
+  userContext: UserContext;
+  setUserContext: React.Dispatch<React.SetStateAction<UserContext>>;
 
-export default function Form({ userContext, setUserContext, handleSubmit, error, showPreview, previewReady }: Props) {
+  error: boolean;
+  showPreview: boolean;
+  isLoading: boolean;
+
+  onGeneratePreview: () => void | Promise<void>;
+  onCompletePdf: () => void | Promise<void>;
+};
+
+
+export default function Form({ userContext, setUserContext, error, showPreview, onGeneratePreview, isLoading, onCompletePdf }: Props) {
     const { campaignType, description, industry, email } = userContext
     const [otherToggle, setOtherToggle] = useState(false)
 
@@ -20,6 +25,8 @@ export default function Form({ userContext, setUserContext, handleSubmit, error,
         campaignType === 'audience'
         ? 'Tell us about your product'
         : 'Tell us about your audience';
+
+        console.log('showPreview', showPreview)
   return (
     <div
         className=
@@ -28,7 +35,6 @@ export default function Form({ userContext, setUserContext, handleSubmit, error,
    {/* CARD */}
     <div className="w-full max-w-160">
       <form
-        onSubmit={handleSubmit}
         className="rounded-xl border border-slate-800 bg-slate-900 p-6 sm:p-8 space-y-6"
       >
         {/* CAMPAIGN TYPE */}
@@ -148,23 +154,30 @@ export default function Form({ userContext, setUserContext, handleSubmit, error,
           }}/>
         </div>
         {/* BUTTONS */}
-        <div className='flex flex-col gap-2'>
-          {showPreview && previewReady && (
-              <button
-                type="submit"
-                className="w-full rounded-md border border-slate-100 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-900 cursor-pointer hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Update Preview
-              </button>
-          )}
+        <div className="flex flex-col gap-2">
+          {/* Fetch Results / Update Preview */}
           <button
-            type="submit"
-            disabled={!description || !description.trim() || !industry || !email.trim()}
-            className="w-full rounded-md border border-slate-100 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-900 cursor-pointer hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
+            type="button"
+            onClick={onGeneratePreview}
+            disabled={isLoading || !description || !industry || !email}
+            className="w-full rounded-md border bg-slate-100 px-4 py-2 text-sm font-medium text-black"
           >
-            {showPreview && previewReady ? "Complete PDF" : "Fetch Results"}
+            {showPreview ? "Update Preview" : "Fetch Results"}
           </button>
+
+          {/* Complete PDF */}
+          {showPreview && (
+            <button
+              type="button"
+              onClick={onCompletePdf}
+              disabled={isLoading}
+              className="w-full rounded-md border bg-slate-100 px-4 py-2 text-sm font-medium text-black"
+            >
+              Complete PDF
+            </button>
+          )}
         </div>
+
 
       </form>
     </div>

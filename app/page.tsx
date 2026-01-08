@@ -1,11 +1,13 @@
 "use client";
 import Form from "./components/form";
 import { useState } from "react";
-import type { UserContext,  CampaignType } from '@/app/lib/types/campaign';
+import type { UserContext, PreviewContext } from '@/app/lib/types/campaign';
 import { buildOgUrl, FormOutput } from "@/app/lib/org/buildOgUrl";
 import { sendTestEmail } from "./lib/sendGrid/sendEmail";
 import { api } from '@/app/lib/api/client'
 import { motion, AnimatePresence } from "framer-motion";
+import PreviewPanel from "@/app/components/previewPanel";
+
 
 
 export default function Home() {
@@ -18,52 +20,96 @@ export default function Home() {
 
       const [isLoading, setIsLoading] = useState(false)
       const [showPreview, setShowPreview] = useState(false)
-      const [previewReady, setPreviewReady] = useState(false);
       const [formOutput, setFormOutput] = useState<FormOutput | null>(null);
+      const [previewContext, setPreviewContext] = useState<PreviewContext | null>(null);
+      
       
       const [error, setError] = useState(false)
+
+      const isDirty =
+        previewContext &&
+        JSON.stringify(userContext) !== JSON.stringify(previewContext);
+
+
+
+     async function commitAndGenerate() {
+      setIsLoading(true);
+      try {
+          const data = await api.post<FormOutput>("/generate", { userContext });
+
+            setFormOutput(data);
+            setPreviewContext(userContext);
+            setShowPreview(true);
+          } catch (err) {
+            console.error(err);
+          } finally {
+            setIsLoading(false);
+          }
+      }
+
+      const handlePreviewClick = async () => {
+        await commitAndGenerate();
+      };
       
-      // FORM SUBMITION FUNC
-      async function handleSubmit(e?: React.FormEvent) {
-        e?.preventDefault();
-        setError(false);        
-        setIsLoading(true);
-
-        if (!userContext.description.trim()) {
-          setError(true);
-          return;
-        }
-
-        setShowPreview(true);
-        setPreviewReady(false);
-        setIsLoading(true);
-        
-        try {
-          const data = await api.post<FormOutput>('/generate', { userContext });
-          setFormOutput(data);
-          setTimeout(() => setPreviewReady(true), 180);
-
-          console.log("** API RETURN -->", data)
-
-          // if (userContext.email) {
-          //   await api.post('/testEmail', { email: userContext.email });
-          // }
-        } catch (err) {
-          console.error('FETCH ERROR', err);
-          setError(true);
-        } finally {
-          setIsLoading(false);
-        }
-      }      
-
-      // IMAGE URL BUILDER
-      const ogImageUrl = formOutput
-      ? buildOgUrl(formOutput, userContext)
-      : null;
       
+      async function handleCompletePdf() {      
+        // If user edited after preview, force update first
+        if (isDirty) {
+          await commitAndGenerate();
+        }
+      
+        // Now you are GUARANTEED:
+        // - previewContext exists
+        // - formOutput matches the preview
+        // Safe to export / email / PDF
+        // await generatePdfFromPreview();
+      }
+
+      const ogImageUrl =
+      formOutput && previewContext
+        ? buildOgUrl(formOutput, previewContext)
+        : null;
+    
       //
 
+      
 
+      
+      // // FORM SUBMITION FUNC
+      // async function handleSubmit(e?: React.FormEvent) {
+      //   e?.preventDefault();
+      //   setError(false);        
+      //   setIsLoading(true);
+
+      //   if (!userContext.description.trim()) {
+      //     setError(true);
+      //     return;
+      //   }
+
+      //   setShowPreview(true);
+      //   setPreviewReady(false);
+      //   setIsLoading(true);
+        
+      //   try {
+      //     const data = await api.post<FormOutput>('/generate', { userContext });
+      //     setFormOutput(data);
+      //     setPreviewContext(userContext)
+      //     setTimeout(() => setPreviewReady(true), 180);
+
+      //     console.log("** API RETURN -->", data)
+
+      //     // if (userContext.email) {
+      //     //   await api.post('/testEmail', { email: userContext.email });
+      //     // }
+      //   } catch (err) {
+      //     console.error('FETCH ERROR', err);
+      //     setError(true);
+      //   } finally {
+      //     setIsLoading(false);
+      //   }
+      // }  
+      
+  
       // LOADING SCREEN
       // if (isLoading) {
       //   return (
@@ -152,65 +198,24 @@ export default function Home() {
                 <Form
                   userContext={userContext}
                   setUserContext={setUserContext}
-                  handleSubmit={handleSubmit}
+                  onGeneratePreview={handlePreviewClick}
                   error={error}
                   showPreview={showPreview}
+                  isLoading={isLoading}
+                  onCompletePdf={handleCompletePdf}
                 />
               </motion.div>
       
               {/* RIGHT — PREVIEW */}
-              <AnimatePresence>
-                {showPreview && (
-                  <motion.div
-                    key="preview"
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 12 }}
-                    transition={{ duration: 0.25, ease: "easeOut" }}
-                    className="rounded-xl border border-slate-800 bg-slate-900 p-6 sm:p-8"
-                  >
-                    <div className="mb-4">
-                      <h2 className="text-sm font-medium text-slate-100">Preview</h2>
-                      <p className="text-xs text-slate-400">
-                        {isLoading ? "Generating…" : "Updated preview"}
-                      </p>
-                    </div>
-      
-                    {/* PREVIEW VIEWER */}
-                    <div className="h-[75vh] rounded-lg border border-slate-800 bg-slate-950 overflow-hidden">
-                      <div className="h-full w-full flex items-center justify-center p-4">
-                        <AnimatePresence mode="wait">
-                          {!previewReady || !ogImageUrl ? (
-                            <motion.div
-                              key="placeholder"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              className="text-sm text-slate-500"
-                            >
-                              Generating preview…
-                            </motion.div>
-                          ) : (
-                            <motion.img
-                              key={ogImageUrl}
-                              src={ogImageUrl}
-                              alt="Campaign infographic"
-                              initial={{ opacity: 0, scale: 0.985 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              exit={{ opacity: 0, scale: 0.985 }}
-                              transition={{ duration: 0.22, ease: "easeOut" }}
-                              className="max-h-full max-w-full object-contain rounded-md shadow"
-                            />
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+               {showPreview && (
+                  <PreviewPanel
+                    showPreview={showPreview}
+                    isLoading={isLoading}
+                    ogImageUrl={ogImageUrl}
+                  />
+               )}
             </motion.div>
           </div>
         </div>
       );
-      
     }      

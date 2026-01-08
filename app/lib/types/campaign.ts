@@ -6,3 +6,10 @@ export interface UserContext {
   industry?: string;
   email:string;
 }
+
+export interface PreviewContext {
+  campaignType: CampaignType;
+  description: string;
+  industry?: string;
+  email:string;
+}

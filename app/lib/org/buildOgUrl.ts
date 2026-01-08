@@ -1,4 +1,4 @@
-import type { UserContext } from "@/app/lib/types/campaign";
+import type { UserContext, PreviewContext } from "@/app/lib/types/campaign";
 
 interface AudienceOutput {
   sample_size: string;
@@ -10,26 +10,32 @@ interface ProductOutput {
   swag_items: string[];
 }
 
+
 export type FormOutput = AudienceOutput | ProductOutput;
 
 
 export function buildOgUrl(
   formOutput: AudienceOutput | ProductOutput,
-  userContext: UserContext
-) {
+  previewContext: PreviewContext
+
+) 
+{
   const params = new URLSearchParams();
+  
 
-  params.set("campaignType", userContext.campaignType);
-  params.set("industry", userContext.industry || "CPG");
+  console.log('checkking preview context',previewContext)
 
-  if (userContext.campaignType === "audience") {
+  params.set("campaignType", previewContext.campaignType);
+  params.set("industry", previewContext.industry || "CPG");
+
+  if (previewContext.campaignType === "audience") {
     const output = formOutput as AudienceOutput;
     params.set("sampleSize", output.sample_size);
     params.set("conversion", output.conversion_rate);
     params.set("ltv", output.ltv_multiple);
   }
 
-  if (userContext.campaignType === "product") {
+  if (previewContext.campaignType === "product") {
     const output = formOutput as any;
 
     const items: string[] = Array.isArray(output?.swag_items)
