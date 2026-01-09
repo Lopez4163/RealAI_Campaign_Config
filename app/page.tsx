@@ -34,6 +34,7 @@ export default function Home() {
 
      async function commitAndGenerate() {
       setIsLoading(true);
+      
       try {
           const data = await api.post<FormOutput>("/generate", { userContext });
 

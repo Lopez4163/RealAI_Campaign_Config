@@ -160,7 +160,7 @@ export default function Form({ userContext, setUserContext, error, showPreview, 
             type="button"
             onClick={onGeneratePreview}
             disabled={isLoading || !description || !industry || !email}
-            className="w-full rounded-md border bg-slate-100 px-4 py-2 text-sm font-medium text-black"
+            className="w-full rounded-md border bg-slate-100 px-4 py-2 text-sm font-medium text-black cursor-pointer"
           >
             {showPreview ? "Update Preview" : "Fetch Results"}
           </button>
@@ -171,7 +171,7 @@ export default function Form({ userContext, setUserContext, error, showPreview, 
               type="button"
               onClick={onCompletePdf}
               disabled={isLoading}
-              className="w-full rounded-md border bg-slate-100 px-4 py-2 text-sm font-medium text-black"
+              className="w-full rounded-md border bg-slate-100 px-4 py-2 text-sm font-medium text-black cursor-pointer"
             >
               Complete PDF
             </button>
