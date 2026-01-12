@@ -8,6 +8,7 @@ import { handleCreatePdf } from "./lib/pdf/createPdf";
 import { api } from '@/app/lib/api/client'
 import { motion, AnimatePresence } from "framer-motion";
 import PreviewPanel from "@/app/components/previewPanel";
+import { PdfState } from "./lib/types/pdf";
 
 
 
@@ -24,51 +25,64 @@ export default function Home() {
       const [formOutput, setFormOutput] = useState<FormOutput | null>(null);
       const [previewContext, setPreviewContext] = useState<PreviewContext | null>(null);
       const [error, setError] = useState(false)
+      const [pdfState, setPdfState] = useState<PdfState>({ status: "idle" });
+      const [isPreviewImageReady, setIsPreviewImageReady] = useState(false);
+
+
 
       const isDirty =
         previewContext &&
         JSON.stringify(userContext) !== JSON.stringify(previewContext);
 
-      async function commitAndGenerate() {
-        setIsLoading(true);
-        try {
-            const data = await api.post<FormOutput>("/generate", { userContext });
+        const previewReady = showPreview && !!previewContext && !!formOutput && isPreviewImageReady;
+        const canCompletePdf = previewReady && !isDirty && pdfState.status !== "sending";
+        const isPreviewBusy = isLoading || (showPreview && !isPreviewImageReady);
 
-              setFormOutput(data);
-              setPreviewContext(userContext);
-              setShowPreview(true);
-            } catch (err) {
-              console.error(err);
-            } finally {
-              setIsLoading(false);
-            }
-      }
+
+
+        async function commitAndGenerate() {
+          setIsLoading(true);
+          setIsPreviewImageReady(false); // ✅ reset whenever we generate a new preview
+          try {
+            const data = await api.post<FormOutput>("/generate", { userContext });
+            setFormOutput(data);
+            setPreviewContext(userContext);
+            setShowPreview(true);
+          } catch (err) {
+            console.error(err);
+          } finally {
+            setIsLoading(false);
+          }
+        }
+        
 
       const handlePreviewClick = async () => {
         await commitAndGenerate();
       };
 
-      const sendPdf = async (
-        previewContext: PreviewContext,
-        formOutput: FormOutput
-      ) => {
-        if (!previewContext.email) return;
-      
-        const data = await api.post("/emailPdf", {
-          email: previewContext.email,
-          previewContext,
-          formOutput,
-        });
-        return data;
-      };
       
       async function handleCompletePdf() {
-        if (isDirty) {
-          await commitAndGenerate();
+        try {
+          if (!canCompletePdf || !formOutput || !previewContext?.email) return;
+      
+          setPdfState({ status: "sending" });
+      
+          await api.post("/emailPdf", {
+            email: previewContext.email,
+            previewContext,
+            formOutput,
+          });
+      
+          setPdfState({ status: "success", email: previewContext.email });
+        } catch (err) {
+          console.error(err);
+          setPdfState({
+            status: "error",
+            message: "We couldn’t send your PDF. Please try again or download it instead.",
+          });
         }
-        if (!formOutput || !previewContext?.email) return;
-        await sendPdf(previewContext, formOutput);
       }
+      
 
       const ogImageUrl =
       formOutput && previewContext
@@ -109,8 +123,10 @@ export default function Home() {
                   onGeneratePreview={handlePreviewClick}
                   error={error}
                   showPreview={showPreview}
-                  isLoading={isLoading}
+                  isLoading={isPreviewBusy}   // ✅ change this line
                   onCompletePdf={handleCompletePdf}
+                  pdfState={pdfState}
+                  canCompletePdf={canCompletePdf}
                 />
               </motion.div>
     
@@ -120,10 +136,56 @@ export default function Home() {
                     showPreview={showPreview}
                     isLoading={isLoading}
                     ogImageUrl={ogImageUrl}
+                    onPreviewReady={setIsPreviewImageReady}
+
                   />
                )}
             </motion.div>
+            {(pdfState.status === "success" || pdfState.status === "error") && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                <div className="w-full max-w-md rounded-xl border bg-white p-6 shadow-lg">
+                  <h2 className="text-lg font-semibold text-black">
+                    {pdfState.status === "success" ? "PDF Sent" : "Send Failed"}
+                  </h2>
+
+                  <p className="mt-2 text-sm text-slate-700">
+                    {pdfState.status === "success"
+                      ? `We emailed your PDF to ${pdfState.email}.`
+                      : pdfState.message}
+                  </p>
+
+                  {pdfState.status === "success" && (
+                    <p className="mt-2 text-xs text-slate-500">
+                      It may take up to a minute to arrive. Check spam or junk if you don’t see it.
+                    </p>
+                  )}
+
+                  <div className="mt-6 flex justify-end gap-2">
+                    {pdfState.status === "error" && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPdfState({ status: "idle" });
+                          handleCompletePdf();
+                        }}
+                        className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white"
+                      >
+                        Try Again
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => setPdfState({ status: "idle" })}
+                      className="rounded-md border px-4 py-2 text-sm font-medium text-black"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       );
-    }      
+      }      

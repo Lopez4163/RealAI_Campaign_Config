@@ -11,6 +11,8 @@ type Props = {
   showPreview: boolean;
   isLoading: boolean;
   ogImageUrl: string | null;
+  onPreviewReady: (ready: boolean) => void; // ✅ new
+
 };
 
 /* =========================
@@ -53,7 +55,7 @@ function LoaderOverlay() {
 /* =========================
    Preview Panel
    ========================= */
-export default function PreviewPanel({ showPreview, isLoading, ogImageUrl }: Props) {
+export default function PreviewPanel({ showPreview, isLoading, ogImageUrl, onPreviewReady }: Props) {
   const [displayUrl, setDisplayUrl] = useState<string | null>(null);
   const [showLoader, setShowLoader] = useState(false);
   const [pendingReveal, setPendingReveal] = useState(false);
@@ -61,10 +63,12 @@ export default function PreviewPanel({ showPreview, isLoading, ogImageUrl }: Pro
 
   useEffect(() => {
     if (isLoading) {
+      onPreviewReady(false); 
       setShowLoader(true);
       setPendingReveal(false);
     }
-  }, [isLoading]);
+  }, [isLoading, onPreviewReady]);
+  
 
   useEffect(() => {
     if (!ogImageUrl) return;
@@ -73,6 +77,8 @@ export default function PreviewPanel({ showPreview, isLoading, ogImageUrl }: Pro
 
     setShowLoader(true);
     setPendingReveal(false);
+    onPreviewReady(false); // ✅ new image incoming
+
 
     const img = new window.Image();
 
@@ -85,6 +91,7 @@ export default function PreviewPanel({ showPreview, isLoading, ogImageUrl }: Pro
     img.onerror = () => {
       if (requestIdRef.current !== myRequestId) return;
       setPendingReveal(false);
+      onPreviewReady(false);
       if (!isLoading) setShowLoader(false);
     };
 
@@ -139,6 +146,7 @@ export default function PreviewPanel({ showPreview, isLoading, ogImageUrl }: Pro
                     if (pendingReveal && !forceLoader) {
                       setShowLoader(false);
                       setPendingReveal(false);
+                      onPreviewReady(true); // ✅ NOW it’s safe to Complete PDF
                     }
                   }}
                 />

@@ -3,6 +3,7 @@ import React from 'react'
 import { useState } from 'react'
 import type { UserContext } from '@/app/lib/types/campaign'
 import { handleCreatePdf } from '../lib/pdf/createPdf';
+import { PdfState } from '../lib/types/pdf';
 
 
 type Props = {
@@ -15,19 +16,22 @@ type Props = {
 
   onGeneratePreview: () => void | Promise<void>;
   onCompletePdf: () => void | Promise<void>;
+  pdfState: PdfState;
+  canCompletePdf: boolean;
+
 };
 
 
-export default function Form({ userContext, setUserContext, error, showPreview, onGeneratePreview, isLoading, onCompletePdf }: Props) {
+export default function Form({ userContext, setUserContext, error, showPreview, onGeneratePreview, isLoading, onCompletePdf, pdfState, canCompletePdf }: Props) {
     const { campaignType, description, industry, email } = userContext
     const [otherToggle, setOtherToggle] = useState(false)
+
 
     const label =
         campaignType === 'audience'
         ? 'Tell us about your product'
         : 'Tell us about your audience';
 
-        console.log('showPreview', showPreview)
   return (
     <div
         className=
@@ -186,10 +190,18 @@ export default function Form({ userContext, setUserContext, error, showPreview, 
             <button
               type="button"
               onClick={onCompletePdf}
-              disabled={isLoading}
-              className="w-full rounded-md border bg-slate-100 px-4 py-2 text-sm font-medium text-black cursor-pointer"
+              disabled={!canCompletePdf}
+              className={`w-full rounded-md border px-4 py-2 text-sm font-medium
+                ${canCompletePdf
+                  ? "bg-slate-100 text-black"
+                  : "bg-slate-300 text-slate-600 cursor-not-allowed"}
+              `}
             >
-              Complete PDF
+              {isLoading
+                ? "Working…"
+                : !canCompletePdf
+                ? "Update Preview to Complete"
+                : "Complete PDF"}
             </button>
           )}
         </div>
