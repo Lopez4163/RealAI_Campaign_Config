@@ -2,6 +2,7 @@
 import React from 'react'
 import { useState } from 'react'
 import type { UserContext } from '@/app/lib/types/campaign'
+import { handleCreatePdf } from '../lib/pdf/createPdf';
 
 
 type Props = {
@@ -160,10 +161,25 @@ export default function Form({ userContext, setUserContext, error, showPreview, 
             type="button"
             onClick={onGeneratePreview}
             disabled={isLoading || !description || !industry || !email}
-            className="w-full rounded-md border bg-slate-100 px-4 py-2 text-sm font-medium text-black cursor-pointer"
+            className={`w-full rounded-md border px-4 py-2 text-sm font-medium
+              ${isLoading
+                ? "bg-slate-300 text-slate-600 cursor-not-allowed"
+                : "bg-slate-100 text-black cursor-pointer"}
+            `}
           >
-            {showPreview ? "Update Preview" : "Fetch Results"}
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                {/* simple spinner */}
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-400 border-t-transparent" />
+                Generating Preview…
+              </span>
+            ) : showPreview ? (
+              "Update Preview"
+            ) : (
+              "Fetch Results"
+            )}
           </button>
+
 
           {/* Complete PDF */}
           {showPreview && (
@@ -177,8 +193,6 @@ export default function Form({ userContext, setUserContext, error, showPreview, 
             </button>
           )}
         </div>
-
-
       </form>
     </div>
   </div>
