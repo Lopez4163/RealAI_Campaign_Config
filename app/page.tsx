@@ -206,7 +206,7 @@ export default function Home() {
                   onCompletePdf={handleCompletePdf}
                 />
               </motion.div>
-      
+    
               {/* RIGHT — PREVIEW */}
                {showPreview && (
                   <PreviewPanel
