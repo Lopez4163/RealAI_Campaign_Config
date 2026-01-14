@@ -22,10 +22,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 1) Build OG URL using your existing helper (UNCHANGED)
     const ogPath = buildOgUrl(formOutput as any, previewContext);
 
-    // 2) Make it absolute so server-side fetch works in dev + prod
     const baseUrl =
       process.env.NEXT_PUBLIC_SITE_URL ??
       `${req.nextUrl.protocol}//${req.nextUrl.host}`;

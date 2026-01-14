@@ -26,20 +26,37 @@ export async function sendTestEmail(to: string) {
   }
 }
 
-// ✅ ADD THIS (new)
-export async function sendPdfEmail(to: string, pdfBuffer: Buffer) {
-  if (!process.env.SENDGRID_API_KEY) {
-    throw new Error('SENDGRID_API_KEY is not set');
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
+
+type PdfTemplateData = {
+  // Match whatever you used in the template:
+  // e.g. {{recipientName}}, {{supportEmail}}, etc.
+  recipientName?: string;
+  supportEmail?: string;
+};
+
+export async function sendPdfEmail(
+  to: string,
+  pdfBuffer: Buffer,
+  templateData: PdfTemplateData = {}
+) {
+  if (!process.env.SENDGRID_API_KEY) throw new Error("SENDGRID_API_KEY is not set");
+  if (!process.env.SENDGRID_PDF_TEMPLATE_ID) {
+    throw new Error("SENDGRID_PDF_TEMPLATE_ID is not set");
   }
 
   const base64Pdf = pdfBuffer.toString("base64");
 
   const msg = {
     to,
-    from: 'adlopez034@gmail.com',
-    subject: 'Your REAL.AI Campaign PDF is ready ✅',
-    text: 'Attached is your REAL.AI Campaign PDF.',
-    html: `<p>Attached is your <strong>REAL.AI Campaign PDF</strong>.</p>`,
+    from: "adlopez034@gmail.com",
+    templateId: process.env.SENDGRID_PDF_TEMPLATE_ID,
+    dynamicTemplateData: {
+      ...templateData,
+      // You can also pass constants here if you want:
+      // subject: "Your REAL.AI Campaign PDF is ready ✅",
+    },
     attachments: [
       {
         content: base64Pdf,
@@ -50,12 +67,6 @@ export async function sendPdfEmail(to: string, pdfBuffer: Buffer) {
     ],
   };
 
-  try {
-    await sgMail.send(msg as any);
-    console.log(`✅ PDF email sent to ${to}`);
-    return { success: true };
-  } catch (error: any) {
-    console.error('❌ SendGrid PDF error:', error?.response?.body || error);
-    throw error;
-  }
+  await sgMail.send(msg as any);
+  return { success: true };
 }

@@ -54,7 +54,6 @@ export async function POST(req: NextRequest) {
 
     const pdfBytes = await pdfDoc.save();
 
-    // 5) Email PDF
     await sendPdfEmail(email, Buffer.from(pdfBytes));
 
     return NextResponse.json({ success: true });
