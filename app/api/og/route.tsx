@@ -1,3 +1,4 @@
+"use client";
 import { ImageResponse } from "@vercel/og";
 
 import RealAiStatsInfographic from "@/app/components/og/RealAiStatsInfographic";
