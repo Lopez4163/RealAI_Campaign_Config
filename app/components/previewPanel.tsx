@@ -3,8 +3,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import NextImage from "next/image";
-
-// ✅ adjust this import path to your actual assets location
 import GestureLoading from "@/public/assets/Gesture-loading.png";
 
 type Props = {
@@ -77,7 +75,7 @@ export default function PreviewPanel({ showPreview, isLoading, ogImageUrl, onPre
 
     setShowLoader(true);
     setPendingReveal(false);
-    onPreviewReady(false); // ✅ new image incoming
+    onPreviewReady(false); 
 
 
     const img = new window.Image();
@@ -146,7 +144,7 @@ export default function PreviewPanel({ showPreview, isLoading, ogImageUrl, onPre
                     if (pendingReveal && !forceLoader) {
                       setShowLoader(false);
                       setPendingReveal(false);
-                      onPreviewReady(true); // ✅ NOW it’s safe to Complete PDF
+                      onPreviewReady(true); 
                     }
                   }}
                 />
