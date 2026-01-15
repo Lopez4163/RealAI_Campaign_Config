@@ -1,4 +1,3 @@
-// app/api/zoho/test/route.ts
 import { NextResponse } from "next/server";
 
 function env(name: string) {

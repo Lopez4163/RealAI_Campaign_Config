@@ -27,7 +27,7 @@ export default function Form({
   onGeneratePreview,
   isLoading,
   onCompletePdf,
-  pdfState, // kept, even if unused right now
+  pdfState, 
   canCompletePdf,
 }: Props) {
   const { campaignType, description, industry, email } = userContext;

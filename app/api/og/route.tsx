@@ -11,17 +11,14 @@ export async function GET(req: Request) {
   const campaignType = searchParams.get("campaignType") ?? "audience";
   const industry = (searchParams.get("industry") ?? "CPG").toUpperCase();
 
-  // ----- Audience params -----
   const sample_size = searchParams.get("sampleSize") ?? "10,000+";
   const conversion_rate = searchParams.get("conversion") ?? "40-45%";
   const ltv_multiple = searchParams.get("ltv") ?? "25-30x";
 
-  // ----- Product params -----
   const items =
     searchParams.get("items")?.split(",").map(s => s.trim()).filter(Boolean) ??
     [];
 
-  // ----- Switch by campaign type -----
   if (campaignType === "audience") {
     return new ImageResponse(
       (
@@ -36,7 +33,6 @@ export async function GET(req: Request) {
     );
   }
 
-  // 👇 Anything NOT audience is product
   return new ImageResponse(
     (
       <RealAiProductInfographic

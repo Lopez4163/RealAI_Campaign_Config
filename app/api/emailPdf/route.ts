@@ -1,4 +1,3 @@
-// app/api/emailPdf/route.ts
 export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
@@ -24,17 +23,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 1) Build OG URL (DO NOT change your helper)
     const ogPath = buildOgUrl(formOutput as any, previewContext);
 
-    // 2) Make OG URL absolute (server-side fetch needs it)
     const baseUrl =
       process.env.NEXT_PUBLIC_SITE_URL ??
       `${req.nextUrl.protocol}//${req.nextUrl.host}`;
 
     const ogUrl = ogPath.startsWith("http") ? ogPath : `${baseUrl}${ogPath}`;
 
-    // 3) Fetch OG image (png)
     const imgRes = await fetch(ogUrl, { cache: "no-store" });
     if (!imgRes.ok) {
       const text = await imgRes.text().catch(() => "");
@@ -44,7 +40,6 @@ export async function POST(req: NextRequest) {
 
     const pngBytes = await imgRes.arrayBuffer();
 
-    // 4) PNG -> PDF
     const pdfDoc = await PDFDocument.create();
     const png = await pdfDoc.embedPng(pngBytes);
 

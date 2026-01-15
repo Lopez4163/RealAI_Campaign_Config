@@ -12,17 +12,12 @@ type Props = {
   isLoading: boolean;
   ogImageUrl: string | null;
   onPreviewReady: (ready: boolean) => void;
-
-  // ✅ needed for mobile Complete button
   canCompletePdf: boolean;
   pdfState: PdfState;
   onCompletePdf: () => void | Promise<void>;
 };
 
 
-/* =========================
-   Loader Overlay (Pulsating PNG)
-   ========================= */
 function LoaderOverlay() {
   return (
     <motion.div
@@ -57,9 +52,6 @@ function LoaderOverlay() {
   );
 }
 
-/* =========================
-   Preview Panel
-   ========================= */
 export default function PreviewPanel({
   showPreview,
   isLoading,
@@ -119,7 +111,6 @@ export default function PreviewPanel({
   return (
     <motion.div className="w-full">
       <div className="rounded-xl border border-slate-800 bg-slate-900 p-2 md:p-6 lg:p-8">
-        {/* Hide header on mobile to remove top spacing */}
         <div className="hidden md:block mb-4">
           <h2 className="text-sm font-medium text-slate-100">Preview</h2>
           <p className="text-xs text-slate-400">
@@ -131,7 +122,6 @@ export default function PreviewPanel({
           </p>
         </div>
 
-        {/* Preview Viewport */}
         <div className="relative h-[55vh] sm:h-[60vh] md:h-[65vh] lg:h-[70vh] rounded-lg border border-slate-800 bg-slate-950 overflow-hidden">
           <AnimatePresence mode="wait">
             {!showPreview ? (
