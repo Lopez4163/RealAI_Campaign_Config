@@ -19,6 +19,8 @@ export default function Home() {
     description: "",
     industry: "",
     email: "",
+    name:"",
+    companyName:""
   });
 
   const [isLoading, setIsLoading] = useState(false);

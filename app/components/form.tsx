@@ -30,7 +30,7 @@ export default function Form({
   pdfState, 
   canCompletePdf,
 }: Props) {
-  const { campaignType, description, industry, email } = userContext;
+  const { campaignType, description, industry, email, name, companyName } = userContext;
   const [otherToggle, setOtherToggle] = useState(false);
 
   const label =
@@ -42,6 +42,74 @@ export default function Form({
     <div className="w-full">
       <div className="mx-auto w-full max-w-160">
         <form className="space-y-6 rounded-xl border border-slate-800 bg-slate-900 p-6 sm:p-8">
+        <div
+            className={`flex gap-4 ${
+              showPreview ? "flex-col" : "flex-row"
+            }`}
+          >
+            <div className={`flex gap-3 w-full ${showPreview ? "flex-col" : "flex-row"}`}>
+              {/* NAME */}
+              <div
+                className={`flex ${
+                  showPreview ? "flex-row items-center gap-3" : "flex-col gap-1"
+                } w-full`}
+              >
+                <label className="text-xs font-medium text-slate-400">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="Your name"
+                  value={name ?? ""}
+                  onChange={(e) =>
+                    setUserContext((prev) => ({ ...prev, name: e.target.value }))
+                  }
+                  className="w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-slate-600"
+                />
+              </div>
+
+              {/* COMPANY */}
+              <div
+                className={`flex ${
+                  showPreview ? "flex-row items-center gap-3" : "flex-col gap-1"
+                } w-full`}
+              >
+                <label className="text-xs font-medium text-slate-400">
+                  Company Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="Company name"
+                  value={companyName ?? ""}
+                  onChange={(e) =>
+                    setUserContext((prev) => ({ ...prev, companyName: e.target.value }))
+                  }
+                  className="w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-slate-600"
+                />
+              </div>
+
+              {/* EMAIL */}
+              <div
+                className={`flex ${
+                  showPreview ? "flex-row items-center gap-3" : "flex-col gap-1"
+                } w-full`}
+              >
+                <label className="text-xs font-medium text-slate-400">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  placeholder="you@email.com"
+                  value={email ?? ""}
+                  onChange={(e) =>
+                    setUserContext((prev) => ({ ...prev, email: e.target.value }))
+                  }
+                  className="w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-slate-600"
+                />
+              </div>
+
+            </div>
+          </div>
           {/* CAMPAIGN TYPE */}
           <div className="space-y-3">
             <h2 className="text-sm font-medium text-slate-200">
@@ -108,9 +176,9 @@ export default function Form({
 
             <div className="flex flex-wrap gap-2">
               {[
-                { label: "CPG", value: "consumer-product-goods" },
-                { label: "EDU", value: "education" },
-                { label: "HOSPITALITY", value: "hospitality" },
+                { label: "Consumer Product Goods", value: "consumer-product-goods" },
+                { label: "Education", value: "education" },
+                { label: "Hospitality", value: "hospitality" },
               ].map((opt) => {
                 const active = industry === opt.value && !otherToggle;
 
@@ -123,11 +191,11 @@ export default function Form({
                       setUserContext((prev) => ({ ...prev, industry: opt.value }));
                     }}
                     className={[
-                      "rounded-md border px-3 py-2 text-sm font-medium cursor-pointer hover:bg-slate-800",
+                      "rounded-md border px-3 py-2 text-sm font-medium transition-colors duration-200",
                       active
-                        ? "border-slate-100 bg-slate-100 text-slate-900"
-                        : "border-slate-800 bg-slate-900 text-slate-100",
-                    ].join(" ")}
+                        ? "border-slate-100 bg-slate-100 text-slate-900 cursor-default"
+                        : "border-slate-800 bg-slate-900 text-slate-100 cursor-pointer hover:border-slate-600 hover:bg-slate-800 hover:text-slate-50",
+                    ].join(" ")}                    
                   >
                     {opt.label}
                   </button>
@@ -141,13 +209,13 @@ export default function Form({
                   setUserContext((prev) => ({ ...prev, industry: "" }));
                 }}
                 className={[
-                  "rounded-md border px-3 py-2 text-sm font-medium cursor-pointer hover:bg-slate-800",
+                  "rounded-md border px-3 py-3 text-sm font-medium cursor-pointer hover:bg-slate-800",
                   otherToggle
-                    ? "border-slate-100 bg-slate-100 text-slate-900"
-                    : "border-slate-800 bg-slate-900 text-slate-100",
+                  ? "border-slate-100 bg-slate-100 text-slate-900 cursor-default"
+                  : "border-slate-800 bg-slate-900 text-slate-100 cursor-pointer hover:border-slate-600 hover:bg-slate-800 hover:text-slate-50",
                 ].join(" ")}
               >
-                OTHER
+                Other
               </button>
             </div>
 
@@ -164,23 +232,6 @@ export default function Form({
             )}
           </div>
 
-          {/* EMAIL */}
-          <div className="space-y-2">
-            <h2 className="text-sm font-medium text-slate-200">
-              Enter Your Email:
-            </h2>
-
-            <input
-              type="text"
-              placeholder="Enter Email"
-              value={email ?? ""}
-              onChange={(e) =>
-                setUserContext((prev) => ({ ...prev, email: e.target.value }))
-              }
-              className="w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none"
-            />
-          </div>
-
           {/* BUTTONS */}
           <div className="flex flex-col gap-2">
             <button
@@ -188,10 +239,10 @@ export default function Form({
               onClick={onGeneratePreview}
               disabled={isLoading || !description || !industry || !email}
               className={[
-                "w-full rounded-md border px-4 py-2 text-sm font-medium",
+                "w-full rounded-md border px-3 py-2 text-sm font-medium transition-colors",
                 isLoading
                   ? "cursor-not-allowed bg-slate-300 text-slate-600"
-                  : "cursor-pointer bg-slate-100 text-black",
+                  : "cursor-pointer bg-slate-100 text-black hover:bg-slate-200 hover:text-slate-800",
               ].join(" ")}
             >
               {isLoading ? (

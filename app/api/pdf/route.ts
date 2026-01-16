@@ -1,4 +1,3 @@
-// app/api/pdf/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { PDFDocument } from "pdf-lib";
 
@@ -30,7 +29,6 @@ export async function POST(req: NextRequest) {
 
     const ogUrl = ogPath.startsWith("http") ? ogPath : `${baseUrl}${ogPath}`;
 
-    // 3) Fetch the OG image (PNG)
     const imgRes = await fetch(ogUrl, { cache: "no-store" });
     if (!imgRes.ok) {
       const text = await imgRes.text().catch(() => "");
@@ -43,7 +41,6 @@ export async function POST(req: NextRequest) {
 
     const pngBytes = await imgRes.arrayBuffer();
 
-    // 4) Wrap the PNG into a 1-page PDF
     const pdfDoc = await PDFDocument.create();
     const png = await pdfDoc.embedPng(pngBytes);
 
@@ -53,7 +50,6 @@ export async function POST(req: NextRequest) {
 
     const pdfBytes = await pdfDoc.save();
 
-    // 5) Return as downloadable PDF
     return new NextResponse(Buffer.from(pdfBytes), {
       headers: {
         "Content-Type": "application/pdf",

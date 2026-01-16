@@ -5,6 +5,8 @@ export interface UserContext {
   description: string;
   industry?: string;
   email:string;
+  name:string;
+  companyName:string;
 }
 
 export interface PreviewContext {
@@ -12,4 +14,6 @@ export interface PreviewContext {
   description: string;
   industry?: string;
   email:string;
+  name:string;
+  companyName:string;
 }
