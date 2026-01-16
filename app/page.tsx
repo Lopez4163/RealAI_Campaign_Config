@@ -32,6 +32,8 @@ export default function Home() {
   const [pdfState, setPdfState] = useState<PdfState>({ status: "idle" });
   const [isPreviewImageReady, setIsPreviewImageReady] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileTab>("form");
+  const [emailError, setEmailError] = useState<string | null>(null);
+
 
   const isDirty =
     previewContext &&
@@ -45,6 +47,7 @@ export default function Home() {
 
   const isPreviewBusy =
     isLoading || (showPreview && !isPreviewImageReady);
+
 
   async function commitAndGenerate() {
     setIsLoading(true);
@@ -62,29 +65,36 @@ export default function Home() {
       setIsLoading(false);
     }
   }
-
   async function handleCompletePdf() {
     try {
       if (!canCompletePdf || !formOutput || !previewContext?.email) return;
-
-      setPdfState({ status: "sending" });
-
-      await api.post("/emailPdf", {
-        email: previewContext.email,
-        previewContext,
-        formOutput,
-      });
-
+        await api.post("/zoho/leeds", { previewContext });
+        setPdfState({ status: "sending" });
+        await api.post("/emailPdf", {
+          email: previewContext.email,
+          previewContext,
+          formOutput,
+        });
       setPdfState({ status: "success", email: previewContext.email });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      if (err?.status === 409) {
+        setEmailError("That email was already used. Please use a different email.");
+        setMobileTab("form");
+        setShowPreview(false);
+        setPdfState({
+          status: "error",
+          message: "That email was already used. Please use a different email.",
+        });
+        return;
+      }      
       setPdfState({
         status: "error",
         message: "We couldn’t send your PDF. Please try again.",
       });
     }
+    
   }
-
   const ogImageUrl =
     formOutput && previewContext
       ? buildOgUrl(formOutput, previewContext)
@@ -98,8 +108,8 @@ export default function Home() {
     setTab: (t: MobileTab) => void;
   }) {
     return (
-      <div className="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/90 backdrop-blur md:hidden">
-        <div className="mx-auto max-w-6xl px-4 py-3">
+      <div className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur md:hidden">
+        <div className="mx-auto max-w-6xl px-4">
           <div className="grid grid-cols-2 overflow-hidden rounded-xl border border-slate-800">
             <button
               onClick={() => setTab("form")}
@@ -155,6 +165,9 @@ export default function Home() {
               onCompletePdf={handleCompletePdf}
               pdfState={pdfState}
               canCompletePdf={canCompletePdf}
+              emailError={emailError}
+              setEmailError={setEmailError}
+
             />
           </div>
 
@@ -195,6 +208,8 @@ export default function Home() {
                 onCompletePdf={handleCompletePdf}
                 pdfState={pdfState}
                 canCompletePdf={canCompletePdf}
+                emailError={emailError}
+                setEmailError={setEmailError}
               />
             </motion.div>
 
@@ -234,20 +249,16 @@ export default function Home() {
             )}
 
             <div className="mt-6 flex justify-end gap-2">
-              {pdfState.status === "error" && (
-                <button
-                  onClick={() => {
-                    setPdfState({ status: "idle" });
-                    handleCompletePdf();
-                  }}
-                  className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white"
-                >
-                  Try Again
-                </button>
-              )}
-
               <button
-                onClick={() => setPdfState({ status: "idle" })}
+                onClick={() => {
+                  setPdfState({ status: "idle" });
+                  setShowPreview(false);
+                  setPreviewContext(null);
+                  setFormOutput(null);
+                  setIsPreviewImageReady(false);
+                  setEmailError(null);
+                  setMobileTab("form");
+                }}
                 className="rounded-md border px-4 py-2 text-sm font-medium text-black"
               >
                 Close

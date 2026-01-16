@@ -17,6 +17,8 @@ type Props = {
   onCompletePdf: () => void | Promise<void>;
   pdfState: PdfState;
   canCompletePdf: boolean;
+  emailError?: string | null;
+  setEmailError: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 export default function Form({
@@ -29,6 +31,9 @@ export default function Form({
   onCompletePdf,
   pdfState, 
   canCompletePdf,
+  emailError,
+  setEmailError,
+
 }: Props) {
   const { campaignType, description, industry, email, name, companyName } = userContext;
   const [otherToggle, setOtherToggle] = useState(false);
@@ -43,17 +48,11 @@ export default function Form({
       <div className="mx-auto w-full max-w-160">
         <form className="space-y-6 rounded-xl border border-slate-800 bg-slate-900 p-6 sm:p-8">
         <div
-            className={`flex gap-4 ${
-              showPreview ? "flex-col" : "flex-row"
-            }`}
-          >
-            <div className={`flex gap-3 w-full ${showPreview ? "flex-col" : "flex-row"}`}>
+            className='flex gap-4 flex-col'
+        >
+            <div className="flex gap-3 w-full flex-col">
               {/* NAME */}
-              <div
-                className={`flex ${
-                  showPreview ? "flex-row items-center gap-3" : "flex-col gap-1"
-                } w-full`}
-              >
+              <div className='flex flex-col gap-1 w-full'>
                 <label className="text-xs font-medium text-slate-400">
                   Name
                 </label>
@@ -69,11 +68,7 @@ export default function Form({
               </div>
 
               {/* COMPANY */}
-              <div
-                className={`flex ${
-                  showPreview ? "flex-row items-center gap-3" : "flex-col gap-1"
-                } w-full`}
-              >
+              <div className='flex flex-col gap-1 w-full'>
                 <label className="text-xs font-medium text-slate-400">
                   Company Name
                 </label>
@@ -89,23 +84,38 @@ export default function Form({
               </div>
 
               {/* EMAIL */}
-              <div
-                className={`flex ${
-                  showPreview ? "flex-row items-center gap-3" : "flex-col gap-1"
-                } w-full`}
-              >
+              <div className='flex flex-col gap-1 w-full'>
                 <label className="text-xs font-medium text-slate-400">
                   Email
                 </label>
+
                 <input
                   type="email"
-                  placeholder="you@email.com"
-                  value={email ?? ""}
-                  onChange={(e) =>
-                    setUserContext((prev) => ({ ...prev, email: e.target.value }))
-                  }
-                  className="w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-slate-600"
+                  placeholder="Email address"
+                  value={userContext.email ?? ""}
+                  onChange={(e) => {
+                    setUserContext((prev) => ({
+                      ...prev,
+                      email: e.target.value,
+                    }));
+                    if (emailError) setEmailError(null);
+                  }}
+                  className={`
+                    w-full rounded-md px-3 py-2 text-sm
+                    bg-slate-950 text-slate-100 placeholder:text-slate-500
+                    focus:outline-none
+                    ${
+                      emailError
+                        ? "border border-red-500 ring-2 ring-red-400 focus:border-red-500"
+                        : "border border-slate-800 focus:border-slate-600"
+                    }
+                  `}
                 />
+                {emailError && (
+                  <p className="text-xs text-red-500">
+                    {emailError}
+                  </p>
+                )}
               </div>
 
             </div>
@@ -160,7 +170,7 @@ export default function Form({
                   description: e.target.value,
                 }))
               }
-              className="min-h-40 w-full resize-none rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none"
+              className="min-h-25 w-full resize-none rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none"
             />
 
             {error && (
@@ -239,7 +249,7 @@ export default function Form({
               onClick={onGeneratePreview}
               disabled={isLoading || !description || !industry || !email}
               className={[
-                "w-full rounded-md border px-3 py-2 text-sm font-medium transition-colors",
+                "w-full rounded-md border px-2 py-2 text-sm font-medium transition-colors",
                 isLoading
                   ? "cursor-not-allowed bg-slate-300 text-slate-600"
                   : "cursor-pointer bg-slate-100 text-black hover:bg-slate-200 hover:text-slate-800",

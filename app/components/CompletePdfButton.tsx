@@ -21,7 +21,7 @@ export default function CompletePdfButton({
       onClick={onClick}
       disabled={disabled}
       className={[
-        "w-full rounded-md border px-3 py-2 text-sm font-medium hover:bg-slate-200 hover:text-slate-800 cursor-pointer",
+        "w-full rounded-md border px-2 py-2 text-sm font-medium hover:bg-slate-200 hover:text-slate-800 cursor-pointer",
         disabled
           ? "bg-slate-300 text-slate-600 cursor-not-allowed"
           : "bg-slate-100 text-black",
